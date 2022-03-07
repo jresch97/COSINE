@@ -22,6 +22,8 @@
 #ifndef COS_OBJECT_H
 #define COS_OBJECT_H
 
+/* Opaque */
+
 typedef struct COS_OBJECT_S *COS_OBJECT;
 
 #endif

@@ -27,6 +27,8 @@
 #include "types.h"
 #include "object.h"
 
+/* Value Variant */
+
 typedef struct COS_VALUE_S {
         int type;
         union {
@@ -44,6 +46,8 @@ typedef struct COS_VALUE_S {
                 size_t         size;
         } data;
 } COS_VALUE;
+
+/* Boxing/Unboxing */
 
 COS_VALUE cos_box_void()
 {

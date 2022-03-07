@@ -26,6 +26,8 @@
 #include "object.h"
 #include "value.h"
 
+/* COSINE Interface */
+
 int cos_init()
 {
         return 1;

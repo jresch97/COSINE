@@ -26,12 +26,12 @@
 
 #include "cos.h"
 
-void test_constructor(COS_OBJECT this, COS_VALUE values)
+void test_ctor(COS_OBJECT this, COS_VALUE values)
 {
 
 }
 
-void test_destructor(COS_OBJECT this)
+void test_dtor(COS_OBJECT this)
 {
 
 }
@@ -41,7 +41,7 @@ void test_print(COS_OBJECT this)
 
 }
 
-COS_VALUE test_sum(COS_OBJECT this)
+COS_VALUE test_sum(COS_OBJECT this, COS_VALUE values)
 {
         return cos_box_int(0);
 }
@@ -57,16 +57,16 @@ int main(void)
         test_class = cos_def_class("Test",
                 COS_DEF_BEGIN,
                 COS_DEF_PARENT, "Object",
-                COS_DEF_CTOR, COS_PUBLIC, test_constructor, 3,
+                COS_DEF_CTOR, COS_VIS_PUBLIC, test_ctor, 3,
                         "a", COS_TYPE_INT,
                         "b", COS_TYPE_INT,
                         "c", COS_TYPE_INT,
-                COS_DEF_DTOR, COS_PUBLIC, test_destructor,
-                COS_DEF_FIELD, COS_PUBLIC, "a", COS_TYPE_INT, 0,
-                COS_DEF_FIELD, COS_PUBLIC, "b", COS_TYPE_INT, 0,
-                COS_DEF_FIELD, COS_PUBLIC, "c", COS_TYPE_INT, 0,
-                COS_DEF_METHOD, COS_PUBLIC, "sum", COS_TYPE_INT, test_sum, 0,
-                COS_DEF_METHOD, COS_PUBLIC, "print", COS_TYPE_VOID, test_print, 0,
+                COS_DEF_DTOR, COS_VIS_PUBLIC, test_dtor,
+                COS_DEF_FIELD, COS_VIS_PUBLIC, "a", COS_TYPE_INT, 0,
+                COS_DEF_FIELD, COS_VIS_PUBLIC, "b", COS_TYPE_INT, 0,
+                COS_DEF_FIELD, COS_VIS_PUBLIC, "c", COS_TYPE_INT, 0,
+                COS_DEF_METHOD, COS_VIS_PUBLIC, "sum", COS_TYPE_INT, test_sum, 0,
+                COS_DEF_METHOD, COS_VIS_PUBLIC, "print", COS_TYPE_VOID, test_print, 0,
                 COS_DEF_END);
         assert(test_class);
         printf("defined class %s\n", cos_name_of_class(test_class));

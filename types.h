@@ -22,6 +22,8 @@
 #ifndef COS_TYPES_H
 #define COS_TYPES_H
 
+/* Primitive Types */
+
 enum COS_TYPES {
         COS_TYPE_VOID,
         COS_TYPE_CLASS,

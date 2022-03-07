@@ -22,7 +22,11 @@
 #ifndef COS_CLASS_H
 #define COS_CLASS_H
 
+/* Opaque */
+
 typedef struct COS_CLASS_S *COS_CLASS;
+
+/* Definition List Types */
 
 enum COS_DEF_TYPES {
         COS_DEF_EMPTY,
@@ -35,15 +39,18 @@ enum COS_DEF_TYPES {
         COS_DEF_END
 };
 
-enum COS_VISIBILITY_TYPES {
-        COS_PRIVATE,
-        COS_PROTECTED,
-        COS_PUBLIC
+/* Visibility Types */
+
+enum COS_VIS_TYPES {
+        COS_VIS_PRIVATE,
+        COS_VIS_PROTECTED,
+        COS_VIS_PUBLIC
 };
+
+/* Class Interface */
 
 COS_CLASS cos_def_class(const char *name, ...);
 COS_CLASS cos_class(const char *name);
-
 const char *cos_name_of_class(COS_CLASS class);
 COS_CLASS cos_parent_of_class(COS_CLASS class);
 

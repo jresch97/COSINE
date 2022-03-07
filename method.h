@@ -25,11 +25,43 @@
 #include "value.h"
 #include "param.h"
 
-typedef void      (*COS_CONSTRUCTOR_CODE)(COS_OBJECT, COS_VALUES);
-typedef void      (*COS_DESTRUCTOR_CODE)(COS_OBJECT);
-typedef COS_VALUE (*COS_METHOD_CODE)(COS_OBJECT, COS_VALUES);
+/* Signature Types */
+
+enum COS_CODE_TYPES {
+        COS_CODE_CTOR,
+        COS_CODE_DTOR,
+        COS_CODE_VOID,
+        COS_CODE_VALUE
+        COS_CODE_VOID_EMPTY,
+        COS_CODE_VALUE_EMPTY,
+};
+
+/* Signatures */
+
+typedef void      (*COS_CTOR_CODE)(COS_OBJECT, COS_VALUES);  /* Constructor */
+typedef void      (*COS_DTOR_CODE)(COS_OBJECT);              /* Destructor */
+typedef void      (*COS_VOID_CODE)(COS_OBJECT, COS_VALUES);  /* Void w/ Params */
+typedef COS_VALUE (*COS_VALUE_CODE)(COS_OBJECT, COS_VALUES); /* Value w/ Params */
+typedef void      (*COS_VOID_EMPTY_CODE)(COS_OBJECT);        /* Void w/out Params */
+typedef COS_VALUE (*COS_VALUE_EMPTY_CODE)(COS_OBJECT);       /* Value w/out Params */
+
+/* Code Variant */
+
+typedef struct COS_CODE_S {
+        int type;
+        union {
+                COS_CTOR_CODE  ctor;
+                COS_DTOR_CODE  dtor;
+                COS_VOID_CODE  void_r;
+                COS_VALUE_CODE value_r;
+        } data;
+} COS_CODE;
+
+/* Opaque */
 
 typedef struct COS_METHOD_S *COS_METHOD;
+
+/* Method Interface */
 
 const char *cos_name_of_method(COS_METHOD method);
 const char *cos_signature_of_method(COS_METHOD method);
