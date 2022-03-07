@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cos.h"
+#include "cosine.h"
 
 void test_ctor(COS_OBJECT this, COS_VALUE values)
 {

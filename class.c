@@ -104,6 +104,11 @@ static COS_CLASS cos_class_alloc(const char *name, COS_CLASS parent)
         return class;
 }
 
+int cos_parse_def_list(va_list args, COS_CLASS *parent)
+{
+        return 1;
+}
+
 COS_CLASS cos_def_class(const char *name, ...)
 {
         COS_CLASS class, parent;
@@ -132,7 +137,7 @@ COS_CLASS cos_def_class(const char *name, ...)
         while ((def = va_arg(args, int)) != COS_DEF_END) {
                 switch (def) {
                         case COS_DEF_PARENT: {
-                                assert(!parent && "multiple inheritance not supported");
+                                assert(!parent && "multiple inheritance not yet supported");
                                 parent_name = va_arg(args, const char *);
                                 assert(parent_name);
                                 parent = cos_class(parent_name);
@@ -144,8 +149,8 @@ COS_CLASS cos_def_class(const char *name, ...)
                 }
         }
         
-check:  /*assert(def == COS_DEF_END);*/
-        assert(parent != NULL);
+check:  /*assert(def == COS_DEF_END && "invalid definition list");*/
+        assert(parent && "parent listed but NULL provided");
         
 end:    va_end(args);
         
