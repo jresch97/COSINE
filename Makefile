@@ -1,4 +1,4 @@
-objects: main.c class.c
+objects: main.c cosine.c
 	gcc -ansi -pedantic -Wall -o $@ $^
 
 clean:
