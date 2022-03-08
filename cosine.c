@@ -43,7 +43,7 @@ struct COS_PARAM_S {
 
 struct COS_METHOD_S {
         char *name;
-        int type, vis;
+        int type, ret_type, vis;
         COS_PARAMS params;
 };
 
@@ -92,10 +92,47 @@ static COS_METHOD cos_ctor_alloc(COS_CLASS class, int vis, COS_PARAMS params)
                 return NULL;
         }
         strcpy(ctor->name, class->name);
-        ctor->type = COS_TYPE_VOID;
+        ctor->type = COS_METHOD_CTOR;
+        ctor->ret_type = COS_TYPE_VOID;
         ctor->vis = vis;
         ctor->params = params;
         return ctor;
+}
+
+static COS_METHOD cos_dtor_alloc(COS_CLASS class, int vis)
+{
+        COS_METHOD dtor = malloc(sizeof(*dtor));
+        if (!dtor) return NULL;
+        dtor->name = malloc(strlen(class->name) + 2);
+        if (!dtor->name) {
+                free(dtor);
+                return NULL;
+        }
+        dtor->name[0] = '~';
+        strcpy(dtor->name + 1, class->name);
+        dtor->type = COS_METHOD_DTOR;
+        dtor->ret_type = COS_TYPE_VOID;
+        dtor->vis = vis;
+        dtor->params = NULL;
+        return dtor;
+}
+
+static COS_METHOD cos_method_alloc(const char *name, int vis,
+                                   int ret_type, COS_PARAMS params)
+{
+        COS_METHOD method = malloc(sizeof(*method));
+        if (!method) return NULL;
+        method->name = malloc(strlen(name) + 1);
+        if (!method->name) {
+                free(method);
+                return NULL;
+        }
+        strcpy(method->name, name);
+        method->type = COS_METHOD_NORM;
+        method->ret_type = ret_type;
+        method->vis = vis;
+        method->params = NULL;
+        return method;
 }
 
 static COS_METHOD cos_parse_ctor(COS_CLASS class, va_list args)
@@ -115,7 +152,8 @@ static COS_METHOD cos_parse_ctor(COS_CLASS class, va_list args)
                         case COS_DEF_PARAM:
                                 type = va_arg(args, int);
                                 name = va_arg(args, const char *);
-                                cos_params_append(params, cos_param_alloc(name, type));
+                                cos_params_append(params,
+                                        cos_param_alloc(name, type));
                                 break;
                         case COS_END_CTOR:
                                 cos_params_shrink(params);
@@ -127,17 +165,77 @@ static COS_METHOD cos_parse_ctor(COS_CLASS class, va_list args)
         return NULL;
 }
 
+static COS_METHOD cos_parse_dtor(COS_CLASS class, va_list args)
+{
+        int vis;
+        while (1) {
+                switch (va_arg(args, int)) {
+                        case COS_DEF_VIS:
+                                vis = va_arg(args, int);
+                                break;
+                        case COS_DEF_CODE:
+                                va_arg(args, void *);
+                                break;
+                        case COS_END_DTOR:
+                                return cos_dtor_alloc(class, vis);
+                        default:
+                                assert(0 && "Invalid destructor definition.");
+                }
+        }
+        return NULL;
+}
+
+static COS_METHOD cos_parse_method(COS_CLASS class, va_list args)
+{
+        const char *name, *method_name;
+        int vis, type, ret_type;
+        COS_PARAMS params = cos_params_alloc(0);
+        while (1) {
+                switch (va_arg(args, int)) {
+                        case COS_DEF_VIS:
+                                vis = va_arg(args, int);
+                                break;
+                        case COS_DEF_TYPE:
+                                ret_type = va_arg(args, int);
+                                break;
+                        case COS_DEF_CODE:
+                                va_arg(args, void *);
+                                break;
+                        case COS_DEF_NAME:
+                                method_name = va_arg(args, const char *);
+                                break;
+                        case COS_DEF_PARAM:
+                                type = va_arg(args, int);
+                                name = va_arg(args, const char *);
+                                cos_params_append(params,
+                                        cos_param_alloc(name, type));
+                                break;
+                        case COS_END_METHOD:
+                                cos_params_shrink(params);
+                                return cos_method_alloc(method_name,
+                                        vis, ret_type, params);
+                        default:
+                                assert(0 && "Invalid method definition.");
+                }
+        }
+        return NULL;
+}
+
 static COS_CLASS cos_parse(const char *name, va_list args)
 {
-        COS_CLASS class;
+        COS_CLASS class, parent;
+        const char *parent_name;
+        COS_METHODS methods;
         assert(name);
+        methods = cos_methods_alloc(0);
         while (1) {
                 switch (va_arg(args, int)) {
                         case COS_DEF_EMPTY:
                                 return cos_empty_base_class_alloc(name);
                         case COS_DEF_CLASS:
-                                return cos_empty_class_alloc(name,
-                                       cos_class(va_arg(args, const char *)));
+                                parent_name = va_arg(args, const char *);
+                                parent = cos_class(parent_name);
+                                return cos_empty_class_alloc(name, parent);
                         case COS_BEG_CLASS:
                                 class = cos_empty_base_class_alloc(name);
                                 break;
@@ -147,10 +245,18 @@ static COS_CLASS cos_parse(const char *name, va_list args)
                         case COS_BEG_CTOR:
                                 class->ctor = cos_parse_ctor(class, args);
                                 break;
+                        case COS_BEG_DTOR:
+                                class->dtor = cos_parse_dtor(class, args);
+                                break;
+                        case COS_BEG_METHOD:
+                                cos_methods_append(methods,
+                                        cos_parse_method(class, args));
+                                break;
                         case COS_END_CLASS:
+                                cos_methods_shrink(methods);
+                                class->methods = methods;
                                 return class;
                         default:
-                                return class;
                                 assert(0 && "Invalid class definition.");
                 }
         }
@@ -173,7 +279,7 @@ COS_CLASS cos_class(const char *name)
         return NULL;
 }
 
-COS_CLASS cos_def_class(const char *name, ...)
+COS_CLASS cos_class_define(const char *name, ...)
 {
         COS_CLASS class;
         va_list args;
@@ -184,61 +290,73 @@ COS_CLASS cos_def_class(const char *name, ...)
         return class;
 }
 
-const char *cos_name_of_class(COS_CLASS class)
+const char *cos_class_name(COS_CLASS class)
 {
         assert(class);
         return class->name;
 }
 
-COS_CLASS cos_parent_of_class(COS_CLASS class)
+COS_CLASS cos_class_parent(COS_CLASS class)
 {
         assert(class);
         return class->parent;
 }
 
-COS_METHOD cos_ctor_of_class(COS_CLASS class)
+COS_METHOD cos_class_ctor(COS_CLASS class)
 {
         assert(class);
         return class->ctor;
 }
 
-COS_METHOD cos_dtor_of_class(COS_CLASS class)
+COS_METHOD cos_class_dtor(COS_CLASS class)
 {
         assert(class);
         return class->dtor;
 }
 
-COS_METHODS cos_methods_of_class(COS_CLASS class)
+COS_METHODS cos_class_methods(COS_CLASS class)
 {
         assert(class);
         return class->methods;
 }
 
-const char *cos_name_of_method(COS_METHOD method)
+const char *cos_method_name(COS_METHOD method)
 {
         assert(method);
         return method->name;
 }
 
-int cos_type_of_method(COS_METHOD method)
+int cos_method_type(COS_METHOD method)
 {
         assert(method);
         return method->type;
 }
 
-COS_PARAMS cos_params_of_method(COS_METHOD method)
+int cos_method_ret_type(COS_METHOD method)
+{
+        assert(method);
+        return method->ret_type;
+}
+
+int cos_method_vis(COS_METHOD method)
+{
+        assert(method);
+        return method->vis;
+}
+
+COS_PARAMS cos_method_params(COS_METHOD method)
 {
         assert(method);
         return method->params;
 }
 
-const char *cos_name_of_param(COS_PARAM param)
+const char *cos_param_name(COS_PARAM param)
 {
         assert(param);
         return param->name;
 }
 
-int cos_type_of_param(COS_PARAM param)
+int cos_param_type(COS_PARAM param)
 {
         assert(param);
         return param->type;
