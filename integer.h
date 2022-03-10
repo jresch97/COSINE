@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef COS_INT_H
-#define COS_INT_H
+#ifndef COS_INTEGER_H
+#define COS_INTEGER_H
 
 #include "object.h"
 

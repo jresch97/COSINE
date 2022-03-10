@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "int.h"
+#include "integer.h"
 #include "param.h"
 #include "value.h"
 
