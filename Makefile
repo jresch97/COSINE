@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -ansi -pedantic -Wall -O2
+CFLAGS = -ansi -pedantic -Wall -O2 -DNDEBUG
 LDFLAGS = -lm
 
 SRC = main.c string.c integer.c cosine.c object.c class.c param.c value.c type.c

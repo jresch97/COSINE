@@ -34,6 +34,7 @@ COS_VALUE cos_box(int type, void *ptr)
                 case COS_TYPE_INT:    return cos_box_int(*((int *)ptr));
                 default: assert(0 && "Unknown type.");
         }
+        return cos_box_void();
 }
 
 COS_VALUE cos_box_void()

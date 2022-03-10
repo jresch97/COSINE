@@ -125,7 +125,7 @@ void cos_super(void *ptr, ...)
         size_t i, arg;
         va_list args;
         COS_OBJECT obj = COS_OBJECT_CAST(ptr);
-        COS_CLASS class = obj->class, parent = class->parent;
+        COS_CLASS parent = obj->class->parent;
         if (!parent) return;
         cos_values_reset(parent->inst.vals);
         va_start(args, ptr);

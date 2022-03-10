@@ -20,6 +20,7 @@
  */
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "type.h"
 
@@ -41,4 +42,5 @@ const char *cos_type_str(int type)
                 case COS_TYPE_SIZE_T: return "size_t";
                 default: assert(0 && "Unknown type.");
         }
+        return NULL;
 }
