@@ -26,6 +26,8 @@
 #include "param.h"
 #include "object.h"
 
+/* TODO: Keep buffer of COS_VALUES in COS_CLASS to avoid allocations. */
+
 COS_CLASS cos_obj_class_get()
 {
         COS_CLASS class;
