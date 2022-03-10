@@ -25,10 +25,14 @@
 
 #include "cosine.h"
 
+#define INTS_N 1000000
+
 int main(void)
 {
-        COS_INT a, b, c, sum;
+        size_t i;
+        COS_INT a, b, c, sum, *ints;
         COS_STRING hello, world;
+        ints = malloc(INTS_N * sizeof(*ints));
         if (!cos_init()) return EXIT_FAILURE;
         a = cos_new(COS_INT_CLASS, 1);
         b = cos_new(COS_INT_CLASS, 2);
@@ -51,6 +55,12 @@ int main(void)
         printf("\"hello\".len = %lu\n", cos_str_len(hello));
         printf("\"world\".len = %lu\n", cos_str_len(world));
         cos_deref_many(2, hello, world);
+        for (i = 0; i < INTS_N; i++) {
+                ints[i] = cos_new(COS_INT_CLASS, i);
+        }
+        for (i = 0; i < INTS_N; i++) {
+                cos_int_print(ints[i]);
+        }
         cos_term();
         return EXIT_SUCCESS;
 }
