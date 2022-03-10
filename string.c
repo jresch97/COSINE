@@ -31,8 +31,9 @@
 
 COS_CLASS cos_str_class_get()
 {
-        COS_CLASS class;
+        static COS_CLASS class;
         COS_CLASS_INFO info;
+        if (class) return class;
         if (cos_class_lookup(COS_STRING_CLASS_NAME, &class)) return class;
         info.name = COS_STRING_CLASS_NAME;
         info.parent = COS_OBJECT_CLASS;
