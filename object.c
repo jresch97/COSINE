@@ -133,23 +133,25 @@ void cos_super_class_dtor(COS_CLASS parent)
 void cos_super_ctor(COS_CLASS parent, void *ptr, ...)
 {
         int type;
-        size_t i, arg;
         va_list args;
-        COS_OBJECT obj = COS_OBJECT_CAST(ptr);
+        size_t i, arg;
+        COS_VALUES vals;
+        COS_PARAMS params;
         if (!parent) return;
-        cos_values_reset(parent->inst.vals);
+        vals = parent->inst.vals;
+        cos_values_reset(vals);
+        params = parent->inst.params;
         va_start(args, ptr);
-        for (i = 0; i < cos_params_len(parent->inst.params); i++) {
+        for (i = 0; i < cos_params_len(params); i++) {
                 arg = va_arg(args, size_t);
-                type = cos_param_type(cos_params_at(parent->inst.params, i));
-                cos_values_store(parent->inst.vals, cos_box(type, &arg));
+                type = cos_param_type(cos_params_at(params, i));
+                cos_values_store(vals, cos_box(type, &arg));
         }
         va_end(args);
-        parent->inst.ctor(obj, parent->inst.vals);
+        parent->inst.ctor(COS_OBJECT_CAST(ptr), vals);
 }
 
 void cos_super_dtor(COS_CLASS parent, void *ptr)
 {
-        COS_OBJECT obj = COS_OBJECT_CAST(ptr);
-        if (parent) parent->inst.dtor(obj);
+        if (parent) parent->inst.dtor(COS_OBJECT_CAST(ptr));
 }
