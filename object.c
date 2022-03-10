@@ -85,7 +85,8 @@ void *cos_new(COS_CLASS class, ...)
         va_start(args, class);
         for (i = 0; i < cos_params_len(class->inst.params); i++) {
                 arg = va_arg(args, size_t);
-                type = cos_param_type(cos_params_at(class->inst.params, i));
+                type = cos_param_type(cos_params_at(
+                        class->inst.params, i));
                 cos_values_store(class->inst.vals, cos_box(type, &arg));
         }
         va_end(args);
@@ -124,15 +125,14 @@ void cos_super(void *ptr, ...)
         va_list args;
         COS_OBJECT obj = COS_OBJECT_CAST(ptr);
         COS_CLASS class = obj->class, parent = class->parent;
-        if (parent) {
-                cos_values_reset(parent->inst.vals);
-                va_start(args, ptr);
-                for (i = 0; i < cos_params_len(parent->inst.params); i++) {
-                        arg = va_arg(args, size_t);
-                        type = cos_param_type(cos_params_at(parent->inst.params, i));
-                        cos_values_store(parent->inst.vals, cos_box(type, &arg));
-                }
-                va_end(args);
-                parent->inst.ctor(obj, parent->inst.vals);
+        if (!parent) return;
+        cos_values_reset(parent->inst.vals);
+        va_start(args, ptr);
+        for (i = 0; i < cos_params_len(parent->inst.params); i++) {
+                arg = va_arg(args, size_t);
+                type = cos_param_type(cos_params_at(parent->inst.params, i));
+                cos_values_store(parent->inst.vals, cos_box(type, &arg));
         }
+        va_end(args);
+        parent->inst.ctor(obj, parent->inst.vals);
 }
