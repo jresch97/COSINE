@@ -64,6 +64,7 @@ int main(void)
         for (i = 0; i < INTS_N; i++) {
                 cos_deref(ints[i]);
         }
+        free(ints);
         cos_term();
         return EXIT_SUCCESS;
 }
