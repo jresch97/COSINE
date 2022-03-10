@@ -28,7 +28,7 @@
 
 COS_CLASS cos_obj_class_get()
 {
-        static COS_CLASS class;
+        static COS_CLASS class = NULL;
         COS_CLASS_INFO info;
         if (class) return class;
         if (cos_class_lookup(COS_OBJECT_CLASS_NAME, &class)) return class;
