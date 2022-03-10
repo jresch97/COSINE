@@ -78,21 +78,24 @@ COS_CLASS cos_obj_class(COS_OBJECT this)
 void *cos_new(COS_CLASS class, ...)
 {
         int type;
-        size_t i, arg;
         va_list args;
+        size_t i, arg;
         COS_OBJECT obj;
+        COS_VALUES vals;
+        COS_PARAMS params;
         obj = malloc(class->inst.size);
         obj->class = class;
-        cos_values_reset(class->inst.vals);
+        vals = class->inst.vals;
+        cos_values_reset(vals);
+        params = class->inst.params;
         va_start(args, class);
-        for (i = 0; i < cos_params_len(class->inst.params); i++) {
+        for (i = 0; i < cos_params_len(params); i++) {
                 arg = va_arg(args, size_t);
-                type = cos_param_type(cos_params_at(
-                        class->inst.params, i));
-                cos_values_store(class->inst.vals, cos_box(type, &arg));
+                type = cos_param_type(cos_params_at(params, i));
+                cos_values_store(vals, cos_box(type, &arg));
         }
         va_end(args);
-        class->inst.ctor(obj, class->inst.vals);
+        class->inst.ctor(obj, vals);
         return obj;
 }
 
