@@ -25,7 +25,7 @@
 
 #include "cosine.h"
 
-#define INTS_N 10000000
+#define INTS_N 100
 
 int main(void)
 {
