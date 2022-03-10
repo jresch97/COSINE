@@ -66,7 +66,13 @@ COS_PARAMS cos_params_alloc(size_t len)
 
 void cos_params_free(COS_PARAMS params)
 {
-        if (params) free(params->data);
+        size_t i;
+        if (params) {
+                for (i = 0; i < params->len; i++) {
+                        cos_param_free(params->data[i]);
+                }
+                free(params->data);
+        }
         free(params);
 }
 
