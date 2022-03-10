@@ -21,6 +21,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "value.h"
 #include "param.h"
@@ -119,13 +120,12 @@ void cos_deref_many(size_t n, ...)
         va_end(args);
 }
 
-void cos_super(void *ptr, ...)
+void cos_super(COS_CLASS parent, void *ptr, ...)
 {
         int type;
         size_t i, arg;
         va_list args;
         COS_OBJECT obj = COS_OBJECT_CAST(ptr);
-        COS_CLASS parent = obj->class->parent;
         if (!parent) return;
         cos_values_reset(parent->inst.vals);
         va_start(args, ptr);

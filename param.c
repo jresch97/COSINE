@@ -21,6 +21,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include "param.h"
@@ -54,6 +55,24 @@ struct COS_PARAMS_S {
         size_t     i, len;
         COS_PARAM *data;
 };
+
+COS_PARAMS cos_params(size_t len, ...)
+{
+        size_t i;
+        va_list args;
+        COS_PARAMS params;
+        const char *name;
+        int type;
+        params = cos_params_alloc(len);
+        va_start(args, len);
+        for (i = 0; i < len; i++) {
+                name = va_arg(args, const char *);
+                type = va_arg(args, int);
+                cos_params_store(params, cos_param_alloc(name, type));
+        }
+        va_end(args);
+        return params;
+}
 
 COS_PARAMS cos_params_alloc(size_t len)
 {

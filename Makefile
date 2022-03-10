@@ -1,17 +1,21 @@
 CC = gcc
-CFLAGS = -ansi -pedantic -Wall -O2 -DNDEBUG
-LDFLAGS = -lm
+CFLAGS = -ansi -pedantic -Wall -fPIC -O2 -DNDEBUG
+ARFLAGS = rcs
+SRC = cosine.c object.c class.c param.c value.c type.c
+OBJ = cosine.o object.o class.o param.o value.o type.o
 
-SRC = main.c string.c integer.c cosine.c object.c class.c param.c value.c type.c
-OBJ = main.o string.o integer.o cosine.o object.o class.o param.o value.o type.o
+all: libcosine.a libcosine.so
 
-cosine: $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS)
+libcosine.a: $(OBJ)
+	$(AR) $(ARFLAGS) $@ $^
+
+libcosine.so: $(OBJ)
+	$(CC) -shared $^ -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
-	rm cosine $(OBJ)
+	rm libcosine.a libcosine.so $(OBJ)
 
 .PHONY: clean

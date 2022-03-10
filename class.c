@@ -74,6 +74,7 @@ static COS_CLASS cos_class_alloc(COS_CLASS_INFO *info)
                 free(class);
                 return NULL;
         }
+        class->class.ctor(class);
         return class;
 }
 
