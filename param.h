@@ -9,13 +9,9 @@ struct COS_PARAM_S {
 };
 
 COS_PARAM   cos_param_alloc(const char *name, int type);
+void        cos_param_free(COS_PARAM param);
 const char *cos_param_name(COS_PARAM param);
 int         cos_param_type(COS_PARAM param);
-
-struct COS_PARAMS_S {
-        size_t     i, len;
-        COS_PARAM *data;
-};
 
 COS_PARAMS cos_params_alloc(size_t len);
 size_t     cos_params_len(COS_PARAMS params);

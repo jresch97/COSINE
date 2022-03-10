@@ -1,6 +1,6 @@
-#include "object.h"
-
 #include <stdlib.h>
+
+#include "object.h"
 
 COS_CLASS cos_obj_class_get()
 {

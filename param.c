@@ -11,6 +11,12 @@ COS_PARAM cos_param_alloc(const char *name, int type)
         return param;
 }
 
+void cos_param_free(COS_PARAM param)
+{
+        if (param) free(param->name);
+        free(param);
+}
+
 const char *cos_param_name(COS_PARAM param)
 {
         return param->name;
@@ -20,6 +26,11 @@ int cos_param_type(COS_PARAM param)
 {
         return param->type;
 }
+
+struct COS_PARAMS_S {
+        size_t     i, len;
+        COS_PARAM *data;
+};
 
 size_t cos_params_len(COS_PARAMS params)
 {

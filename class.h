@@ -24,7 +24,7 @@ struct COS_CLASS_INFO_S COS_CLASS_INFO; {
 struct COS_CLASS_S {
         char     *name;
         COS_CLASS parent;
-        size_t    size, n_inst;
+        size_t    n_inst;
         struct {
                 size_t size;
                 COS_CLASS_CTOR ctor;
@@ -37,5 +37,7 @@ struct COS_CLASS_S {
                 COS_PARAMS    params;
         } inst;
 };
+
+COS_CLASS cos_class_define(COS_CLASS_INFO *info);
 
 #endif
