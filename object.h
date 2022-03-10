@@ -25,8 +25,9 @@
 #include "type.h"
 #include "class.h"
 
-#define COS_OBJECT_CLASS      (cos_obj_class_get())
 #define COS_OBJECT_CLASS_NAME "Object"
+#define COS_OBJECT_TYPE       (cos_obj_class_get())
+#define COS_OBJECT_CLASS(obj) (((COS_OBJECT)obj)->class)
 
 struct COS_OBJECT_CLASS_S {
         struct COS_CLASS_S class;
@@ -47,11 +48,13 @@ void      cos_obj_ctor(COS_OBJECT this, COS_VALUES values);
 void      cos_obj_dtor(COS_OBJECT this);
 int       cos_obj_n_refs(COS_OBJECT this);
 COS_CLASS cos_obj_class(COS_OBJECT this);
-
-void *cos_new(COS_CLASS class, ...);
-void *cos_ref(void *ptr);
-void  cos_deref(void *ptr);
-void  cos_deref_many(size_t n, ...);
-void  cos_super(COS_CLASS parent, void *ptr, ...);
+void     *cos_new(COS_CLASS class, ...);
+void     *cos_ref(void *ptr);
+void      cos_deref(void *ptr);
+void      cos_deref_many(size_t n, ...);
+void      cos_super_class_ctor(COS_CLASS parent);
+void      cos_super_class_dtor(COS_CLASS parent);
+void      cos_super_ctor(COS_CLASS parent, void *ptr, ...);
+void      cos_super_dtor(COS_CLASS parent, void *ptr);
 
 #endif

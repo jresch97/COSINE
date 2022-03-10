@@ -120,7 +120,17 @@ void cos_deref_many(size_t n, ...)
         va_end(args);
 }
 
-void cos_super(COS_CLASS parent, void *ptr, ...)
+void cos_super_class_ctor(COS_CLASS parent)
+{
+        if (parent) parent->class.ctor(parent);
+}
+
+void cos_super_class_dtor(COS_CLASS parent)
+{
+        if (parent) parent->class.dtor(parent);
+}
+
+void cos_super_ctor(COS_CLASS parent, void *ptr, ...)
 {
         int type;
         size_t i, arg;
@@ -136,4 +146,10 @@ void cos_super(COS_CLASS parent, void *ptr, ...)
         }
         va_end(args);
         parent->inst.ctor(obj, parent->inst.vals);
+}
+
+void cos_super_dtor(COS_CLASS parent, void *ptr)
+{
+        COS_OBJECT obj = COS_OBJECT_CAST(ptr);
+        if (parent) parent->inst.dtor(obj);
 }
