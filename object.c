@@ -60,7 +60,6 @@ void cos_obj_class_dtor(COS_CLASS class)
 void cos_obj_ctor(COS_OBJECT this, COS_VALUES values)
 {
         this->n_refs = 1;
-        this->class  = cos_unbox_class(cos_values_at(values, 0));
 }
 
 void cos_obj_dtor(COS_OBJECT this)
@@ -86,8 +85,7 @@ COS_OBJECT cos_new(COS_CLASS class, ...)
         COS_VALUES vals;
         COS_PARAM param;
         obj = malloc(class->inst.size);
-        obj->class  = class;
-        obj->n_refs = 1;
+        obj->class = class;
         n_params = cos_params_len(class->inst.params);
         vals = cos_values_alloc(n_params);
         va_start(args, class);
@@ -95,17 +93,17 @@ COS_OBJECT cos_new(COS_CLASS class, ...)
                 param = cos_params_at(class->inst.params, i);
                 switch (cos_param_type(param)) {
                         case COS_TYPE_CLASS:
-                                cos_values_append(vals, cos_box_class(
-                                        va_arg(args, COS_CLASS)));
+                                cos_values_append(vals,
+                                        cos_box_class(va_arg(args, COS_CLASS)));
                                 break;
                         case COS_TYPE_INT:
-                                cos_values_append(vals, cos_box_int(
-                                        va_arg(args, int)));
+                                cos_values_append(vals,
+                                        cos_box_int(va_arg(args, int)));
                                 break;
                 }
         }
         va_end(args);
-        obj->class->inst.ctor(obj, vals);
+        class->inst.ctor(obj, vals);
         return obj;
 }
 
@@ -117,8 +115,7 @@ COS_OBJECT cos_ref(COS_OBJECT obj)
 
 void cos_deref(COS_OBJECT obj)
 {
-        obj->n_refs--;
-        if (obj->n_refs == 0) {
+        if (--obj->n_refs == 0) {
                 obj->class->inst.dtor(obj);
                 free(obj);
         }
@@ -129,9 +126,7 @@ void cos_deref_many(size_t n, ...)
         size_t i;
         va_list args;
         va_start(args, n);
-        for (i = 0; i < n; i++) {
-                cos_deref(va_arg(args, COS_OBJECT));
-        }
+        for (i = 0; i < n; i++) cos_deref(va_arg(args, COS_OBJECT));
         va_end(args);
 }
 

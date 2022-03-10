@@ -71,7 +71,7 @@ COS_INT cos_int_sum(size_t n, ...)
 
 void cos_int_ctor(COS_OBJECT this, COS_VALUES vals)
 {
-        cos_super(this, this->class);
+        cos_super(this);
         COS_INT_CAST(this)->val = cos_unbox_int(cos_values_at(vals, 0));
 }
 
