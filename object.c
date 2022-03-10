@@ -78,10 +78,11 @@ COS_CLASS cos_obj_class(COS_OBJECT this)
 
 COS_OBJECT cos_new(COS_CLASS class, ...)
 {
-        size_t     i, n_params;
-        va_list    args;
+        size_t i, n_params;
+        va_list args;
         COS_OBJECT obj;
         COS_VALUES vals;
+        COS_PARAM param;
         obj = malloc(class->inst.size);
         obj->class  = class;
         obj->n_refs = 1;
@@ -89,12 +90,15 @@ COS_OBJECT cos_new(COS_CLASS class, ...)
         vals = cos_values_alloc(n_params);
         va_start(args, class);
         for (i = 0; i < n_params; i++) {
-                switch (cos_param_type(cos_params_at(class->inst.params, i))) {
+                param = cos_params_at(class->inst.params, i);
+                switch (cos_param_type(param)) {
                         case COS_TYPE_CLASS:
-                                cos_values_append(vals, cos_box_class(va_arg(args, COS_CLASS)));
+                                cos_values_append(vals, cos_box_class(
+                                        va_arg(args, COS_CLASS)));
                                 break;
                         case COS_TYPE_INT:
-                                cos_values_append(vals, cos_box_int(va_arg(args, int)));
+                                cos_values_append(vals, cos_box_int(
+                                        va_arg(args, int)));
                                 break;
                 }
         }
