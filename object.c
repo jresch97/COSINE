@@ -132,3 +132,36 @@ void cos_deref_many(size_t n, ...)
         }
         va_end(args);
 }
+
+void cos_super(COS_OBJECT obj, ...)
+{
+        size_t i, n_params;
+        va_list args;
+        COS_CLASS class, parent;
+        COS_PARAMS params;
+        COS_PARAM param;
+        COS_VALUES vals;
+        class = obj->class;
+        parent = class->parent;
+        params = parent->inst.params;
+        n_params = cos_params_len(params);
+        vals = cos_values_alloc(n_params);
+        if (parent) {
+                va_start(args, obj);
+                for (i = 0; i < n_params; i++) {
+                        param = cos_params_at(params, i);
+                        switch (cos_param_type(param)) {
+                                case COS_TYPE_CLASS:
+                                        cos_values_append(vals, cos_box_class(
+                                                va_arg(args, COS_CLASS)));
+                                        break;
+                                case COS_TYPE_INT:
+                                        cos_values_append(vals, cos_box_int(
+                                                va_arg(args, int)));
+                                        break;
+                        }
+                }
+                va_end(args);
+        }
+        parent->inst.ctor(obj, vals);
+}

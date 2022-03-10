@@ -71,12 +71,8 @@ COS_INT cos_int_sum(size_t n, ...)
 
 void cos_int_ctor(COS_OBJECT this, COS_VALUES vals)
 {
-        COS_VALUES obj_vals = cos_values_alloc(1);
-        cos_values_append(obj_vals, cos_box_class(
-                cos_class(COS_INT_CLASS_NAME)));
-        cos_obj_ctor(this, obj_vals);
+        cos_super(this, this->class);
         COS_INT_CAST(this)->val = cos_unbox_int(cos_values_at(vals, 0));
-        free(obj_vals);
 }
 
 void cos_int_dtor(COS_OBJECT this)

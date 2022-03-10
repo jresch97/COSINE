@@ -52,5 +52,6 @@ COS_OBJECT cos_new(COS_CLASS class, ...);
 COS_OBJECT cos_ref(COS_OBJECT obj);
 void       cos_deref(COS_OBJECT obj);
 void       cos_deref_many(size_t n, ...);
+void       cos_super(COS_OBJECT obj, ...);
 
 #endif
