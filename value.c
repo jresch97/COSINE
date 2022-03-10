@@ -20,6 +20,7 @@
  */
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "value.h"
 
@@ -47,7 +48,7 @@ COS_VALUE cos_box_class(COS_CLASS class)
 COS_CLASS cos_unbox_class(COS_VALUE val)
 {
         assert(val.type == COS_TYPE_CLASS);
-        return val.class;
+        return val.data.class;
 }
 
 COS_VALUE cos_box_object(COS_OBJECT obj)
@@ -58,10 +59,10 @@ COS_VALUE cos_box_object(COS_OBJECT obj)
         return val;
 }
 
-COS_CLASS cos_unbox_object(COS_VALUE val)
+COS_OBJECT cos_unbox_object(COS_VALUE val)
 {
         assert(val.type == COS_TYPE_OBJECT);
-        return val.obj;
+        return val.data.obj;
 }
 
 COS_VALUE cos_box_char(char s_char)
@@ -72,10 +73,10 @@ COS_VALUE cos_box_char(char s_char)
         return val;
 }
 
-int cos_unbox_char(COS_VALUE val)
+char cos_unbox_char(COS_VALUE val)
 {
         assert(val.type == COS_TYPE_CHAR);
-        return val.s_char;
+        return val.data.s_char;
 }
 
 COS_VALUE cos_box_short(short s_short)
@@ -86,10 +87,10 @@ COS_VALUE cos_box_short(short s_short)
         return val;
 }
 
-int cos_unbox_short(COS_VALUE val)
+short cos_unbox_short(COS_VALUE val)
 {
         assert(val.type == COS_TYPE_SHORT);
-        return val.s_short;
+        return val.data.s_short;
 }
 
 COS_VALUE cos_box_int(int s_int)
@@ -103,5 +104,34 @@ COS_VALUE cos_box_int(int s_int)
 int cos_unbox_int(COS_VALUE val)
 {
         assert(val.type == COS_TYPE_INT);
-        return val.s_int;
+        return val.data.s_int;
+}
+
+struct COS_VALUES_S {
+        size_t     i, len;
+        COS_VALUE *data;
+};
+
+COS_VALUES cos_values_alloc(size_t len)
+{
+        COS_VALUES values = malloc(sizeof(*values));
+        values->i = 0;
+        values->len = len;
+        values->data = malloc(len * sizeof(*values->data));
+        return values;
+}
+
+size_t cos_values_len(COS_VALUES values)
+{
+        return values->len;
+}
+
+COS_VALUE cos_values_at(COS_VALUES values, size_t i)
+{
+        return values->data[i];
+}
+
+void cos_values_append(COS_VALUES values, COS_VALUE value)
+{
+        values->data[values->i++] = value;
 }

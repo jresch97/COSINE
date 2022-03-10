@@ -19,8 +19,11 @@
  *
  */
 
+#include <stdarg.h>
 #include <stdlib.h>
 
+#include "value.h"
+#include "param.h"
 #include "object.h"
 
 COS_CLASS cos_obj_class_get()
@@ -30,10 +33,10 @@ COS_CLASS cos_obj_class_get()
         if (cos_class_lookup(COS_OBJECT_CLASS_NAME, &class)) return class;
         info.name = COS_OBJECT_CLASS_NAME;
         info.parent = NULL;
-        info.class.size = sizeof(COS_OBJECT_CLASS_S);
+        info.class.size = sizeof(struct COS_OBJECT_CLASS_S);
         info.class.ctor = cos_obj_class_ctor;
         info.class.dtor = cos_obj_class_dtor;
-        info.inst.size = sizeof(COS_OBJECT_S);
+        info.inst.size = sizeof(struct COS_OBJECT_S);
         info.inst.ctor = cos_obj_ctor;
         info.inst.dtor = cos_obj_dtor;
         info.inst.params = cos_params_alloc(1);
@@ -65,7 +68,7 @@ void cos_obj_dtor(COS_OBJECT this)
 
 int cos_obj_n_refs(COS_OBJECT this)
 {
-        return this->nrefs;
+        return this->n_refs;
 }
 
 COS_CLASS cos_obj_class(COS_OBJECT this)
@@ -75,21 +78,35 @@ COS_CLASS cos_obj_class(COS_OBJECT this)
 
 COS_OBJECT cos_new(COS_CLASS class, ...)
 {
+        size_t     i, n_params;
+        va_list    args;
         COS_OBJECT obj;
         COS_VALUES vals;
-        
         obj = malloc(class->inst.size);
-        
-        /* TODO: Params -> Values */
-        
-        obj->class->inst.ctor(obj);
-        
+        obj->class  = class;
+        obj->n_refs = 1;
+        n_params = cos_params_len(class->inst.params);
+        vals = cos_values_alloc(n_params);
+        va_start(args, class);
+        for (i = 0; i < n_params; i++) {
+                switch (cos_param_type(cos_params_at(class->inst.params, i))) {
+                        case COS_TYPE_CLASS:
+                                cos_values_append(vals, cos_box_class(va_arg(args, COS_CLASS)));
+                                break;
+                        case COS_TYPE_INT:
+                                cos_values_append(vals, cos_box_int(va_arg(args, int)));
+                                break;
+                }
+        }
+        va_end(args);
+        obj->class->inst.ctor(obj, vals);
         return obj;
 }
 
 COS_OBJECT cos_ref(COS_OBJECT obj)
 {
-        obj->refs++;
+        obj->n_refs++;
+        return obj;
 }
 
 void cos_deref(COS_OBJECT obj)
@@ -99,4 +116,15 @@ void cos_deref(COS_OBJECT obj)
                 obj->class->inst.dtor(obj);
                 free(obj);
         }
+}
+
+void cos_deref_many(size_t n, ...)
+{
+        size_t i;
+        va_list args;
+        va_start(args, n);
+        for (i = 0; i < n; i++) {
+                cos_deref(va_arg(args, COS_OBJECT));
+        }
+        va_end(args);
 }

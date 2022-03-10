@@ -26,7 +26,7 @@
 
 #define COS_CLASS_CAST(class) ((COS_CLASS)class)
 
-struct COS_CLASS_INFO_S COS_CLASS_INFO; {
+struct COS_CLASS_INFO_S {
         const char *name;
         COS_CLASS   parent;
         struct {
@@ -40,11 +40,11 @@ struct COS_CLASS_INFO_S COS_CLASS_INFO; {
                 COS_INST_DTOR dtor;
                 COS_PARAMS    params;
         } inst;
-} COS_CLASS_INFO;
+};
 
 struct COS_CLASS_S {
         char     *name;
-        COS_CLASS parent;
+        COS_CLASS parent, next;
         size_t    n_inst;
         struct {
                 size_t size;
@@ -59,6 +59,10 @@ struct COS_CLASS_S {
         } inst;
 };
 
+int       cos_class_init();
+void      cos_class_term();
+COS_CLASS cos_class(const char *name);
+int       cos_class_lookup(const char *name, COS_CLASS *out);
 COS_CLASS cos_class_define(COS_CLASS_INFO *info);
 
 #endif

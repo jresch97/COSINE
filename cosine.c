@@ -23,10 +23,11 @@
 
 int cos_init()
 {
+        if (!cos_class_init()) return 0;
         return 1;
 }
 
 void cos_term()
 {
-
+        cos_class_term();
 }

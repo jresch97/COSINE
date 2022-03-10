@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "param.h"
 
@@ -53,7 +54,7 @@ struct COS_PARAMS_S {
         COS_PARAM *data;
 };
 
-size_t cos_params_len(COS_PARAMS params)
+COS_PARAMS cos_params_alloc(size_t len)
 {
         COS_PARAMS params = malloc(sizeof(*params));
         params->i = 0;

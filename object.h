@@ -23,6 +23,7 @@
 #define COS_OBJECT_H
 
 #include "type.h"
+#include "class.h"
 
 #define COS_OBJECT_CLASS      (cos_obj_class_get())
 #define COS_OBJECT_CLASS_NAME "Object"
@@ -50,6 +51,6 @@ COS_CLASS cos_obj_class(COS_OBJECT this);
 COS_OBJECT cos_new(COS_CLASS class, ...);
 COS_OBJECT cos_ref(COS_OBJECT obj);
 void       cos_deref(COS_OBJECT obj);
-void       cos_deref_many(COS_OBJECT obj, ...);
+void       cos_deref_many(size_t n, ...);
 
 #endif

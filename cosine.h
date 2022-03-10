@@ -19,10 +19,15 @@
  *
  */
 
-#ifndef COSINE_H
-#define COSINE_H
+#ifndef COS_COSINE_H
+#define COS_COSINE_H
 
+#include "type.h"
+#include "value.h"
+#include "param.h"
 #include "class.h"
+#include "object.h"
+#include "int.h"
 
 int  cos_init();
 void cos_term();

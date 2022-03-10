@@ -37,7 +37,7 @@ struct COS_INT_CLASS_S {
 COS_CLASS cos_int_class_get();
 void      cos_int_class_ctor(COS_CLASS class);
 void      cos_int_class_dtor(COS_CLASS class);
-void      cos_int_sum(COS_INT a, ...);
+COS_INT   cos_int_sum(size_t n, ...);
 
 #define COS_INT_CAST(obj) ((COS_INT)obj)
 
