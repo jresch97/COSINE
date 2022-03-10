@@ -23,69 +23,64 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "int.h"
+#include "string.h"
 #include "param.h"
 #include "value.h"
 
-COS_CLASS cos_int_class_get()
+COS_CLASS cos_str_class_get()
 {
         COS_CLASS class;
         COS_CLASS_INFO info;
-        if (cos_class_lookup(COS_INT_CLASS_NAME, &class)) return class;
-        info.name = COS_INT_CLASS_NAME;
+        if (cos_class_lookup(COS_STRING_CLASS_NAME, &class)) return class;
+        info.name = COS_STRING_CLASS_NAME;
         info.parent = COS_OBJECT_CLASS;
-        info.class.size = sizeof(struct COS_INT_CLASS_S);
-        info.class.ctor = cos_int_class_ctor;
-        info.class.dtor = cos_int_class_dtor;
-        info.inst.size = sizeof(struct COS_INT_S);
-        info.inst.ctor = cos_int_ctor;
-        info.inst.dtor = cos_int_dtor;
+        info.class.size = sizeof(struct COS_STRING_CLASS_S);
+        info.class.ctor = cos_str_class_ctor;
+        info.class.dtor = cos_str_class_dtor;
+        info.inst.size = sizeof(struct COS_STRING_S);
+        info.inst.ctor = cos_str_ctor;
+        info.inst.dtor = cos_str_dtor;
         info.inst.params = cos_params_alloc(1);
         cos_params_store(info.inst.params,
-                cos_param_alloc("val", COS_TYPE_INT));
+                cos_param_alloc("c_str", COS_TYPE_C_STR));
         return cos_class_define(&info);
 }
 
-void cos_int_class_ctor(COS_CLASS class)
+void cos_str_class_ctor(COS_CLASS class)
 {
         cos_obj_class_ctor(class);
 }
 
-void cos_int_class_dtor(COS_CLASS class)
+void cos_str_class_dtor(COS_CLASS class)
 {
         cos_obj_class_dtor(class);
 }
 
-COS_INT cos_int_sum(size_t n, ...)
-{
-        int sum;
-        size_t i;
-        va_list args;
-        sum = 0;
-        va_start(args, n);
-        for (i = 0; i < n; i++) sum += va_arg(args, COS_INT)->val;
-        va_end(args);
-        return COS_INT_CAST(cos_new(COS_INT_CLASS, sum));
-}
-
-void cos_int_ctor(COS_OBJECT this, COS_VALUES vals)
+void cos_str_ctor(COS_OBJECT this, COS_VALUES vals)
 {
         cos_super(this);
-        COS_INT_CAST(this)->val = cos_unbox_int(cos_values_at(vals, 0));
+        COS_STRING_CAST(this)->c_str = cos_unbox_c_str(cos_values_at(vals, 0));
+        COS_STRING_CAST(this)->len = strlen(COS_STRING_CAST(this)->c_str);
 }
 
-void cos_int_dtor(COS_OBJECT this)
+void cos_str_dtor(COS_OBJECT this)
 {
         /* Nothing to do. */
 }
 
-int cos_int_val(COS_INT this)
+const char *cos_str_c_str(COS_STRING this)
 {
-        return this->val;
+        return this->c_str;
 }
 
-void cos_int_print(COS_INT this)
+size_t cos_str_len(COS_STRING this)
 {
-        printf("%d\n", this->val);
+        return this->len;
+}
+
+void cos_str_print(COS_STRING this)
+{
+        printf("%s\n", this->c_str);
 }

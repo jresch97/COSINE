@@ -28,6 +28,7 @@
 #include "class.h"
 #include "object.h"
 #include "int.h"
+#include "string.h"
 
 int  cos_init();
 void cos_term();

@@ -97,6 +97,10 @@ void *cos_new(COS_CLASS class, ...)
                                 cos_values_store(vals,
                                         cos_box_class(va_arg(args, COS_CLASS)));
                                 break;
+                        case COS_TYPE_C_STR:
+                                cos_values_store(vals, cos_box_c_str(
+                                        va_arg(args, const char *)));
+                                break;
                         case COS_TYPE_INT:
                                 cos_values_store(vals,
                                         cos_box_int(va_arg(args, int)));
@@ -153,6 +157,10 @@ void cos_super(COS_OBJECT obj, ...)
                                 case COS_TYPE_CLASS:
                                         cos_values_store(vals, cos_box_class(
                                                 va_arg(args, COS_CLASS)));
+                                        break;
+                                case COS_TYPE_C_STR:
+                                        cos_values_store(vals, cos_box_c_str(
+                                                va_arg(args, const char *)));
                                         break;
                                 case COS_TYPE_INT:
                                         cos_values_store(vals, cos_box_int(

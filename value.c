@@ -65,6 +65,20 @@ COS_OBJECT cos_unbox_object(COS_VALUE val)
         return val.data.obj;
 }
 
+COS_VALUE cos_box_c_str(const char *c_str)
+{
+        COS_VALUE val;
+        val.type       = COS_TYPE_C_STR;
+        val.data.c_str = c_str;
+        return val;
+}
+
+const char *cos_unbox_c_str(COS_VALUE val)
+{
+        assert(val.type == COS_TYPE_C_STR);
+        return val.data.c_str;
+}
+
 COS_VALUE cos_box_char(char s_char)
 {
         COS_VALUE val;

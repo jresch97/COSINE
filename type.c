@@ -29,6 +29,7 @@ const char *cos_type_str(int type)
                 case COS_TYPE_VOID:   return "void";
                 case COS_TYPE_CLASS:  return "Class";
                 case COS_TYPE_OBJECT: return "Object";
+                case COS_TYPE_C_STR:  return "const char *";
                 case COS_TYPE_CHAR:   return "char";
                 case COS_TYPE_SHORT:  return "short";
                 case COS_TYPE_INT:    return "int";

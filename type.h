@@ -26,6 +26,7 @@ enum COS_TYPES {
         COS_TYPE_VOID,
         COS_TYPE_CLASS,
         COS_TYPE_OBJECT,
+        COS_TYPE_C_STR,
         COS_TYPE_CHAR,
         COS_TYPE_SHORT,
         COS_TYPE_INT,

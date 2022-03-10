@@ -28,6 +28,7 @@
 int main(void)
 {
         COS_INT a, b, c, sum;
+        COS_STRING hello, world;
         if (!cos_init()) return EXIT_FAILURE;
         a = cos_new(COS_INT_CLASS, 1);
         b = cos_new(COS_INT_CLASS, 2);
@@ -44,6 +45,12 @@ int main(void)
         cos_int_print(sum);
         cos_deref_many(3, a, b, c);
         cos_deref(COS_OBJECT_CAST(sum));
+        hello = cos_new(COS_STRING_CLASS, "hello");
+        world = cos_new(COS_STRING_CLASS, "world");
+        cos_str_print(hello);
+        cos_str_print(world);
+        printf("\"hello\".len = %lu\n", cos_str_len(hello));
+        printf("\"world\".len = %lu\n", cos_str_len(world));
         cos_term();
         return EXIT_SUCCESS;
 }
