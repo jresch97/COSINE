@@ -48,8 +48,8 @@ void      cos_obj_dtor(COS_OBJECT this);
 int       cos_obj_n_refs(COS_OBJECT this);
 COS_CLASS cos_obj_class(COS_OBJECT this);
 
-COS_OBJECT cos_new(COS_CLASS class, ...);
-COS_OBJECT cos_ref(COS_OBJECT obj);
+void      *cos_new(COS_CLASS class, ...);
+void      *cos_ref(COS_OBJECT obj);
 void       cos_deref(COS_OBJECT obj);
 void       cos_deref_many(size_t n, ...);
 void       cos_super(COS_OBJECT obj, ...);

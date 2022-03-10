@@ -75,7 +75,7 @@ COS_CLASS cos_obj_class(COS_OBJECT this)
         return this->class;
 }
 
-COS_OBJECT cos_new(COS_CLASS class, ...)
+void *cos_new(COS_CLASS class, ...)
 {
         size_t i, n_params;
         va_list args;
@@ -108,7 +108,7 @@ COS_OBJECT cos_new(COS_CLASS class, ...)
         return obj;
 }
 
-COS_OBJECT cos_ref(COS_OBJECT obj)
+void *cos_ref(COS_OBJECT obj)
 {
         obj->n_refs++;
         return obj;

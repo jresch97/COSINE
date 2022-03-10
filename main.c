@@ -29,9 +29,9 @@ int main(void)
 {
         COS_INT a, b, c, sum;
         if (!cos_init()) return EXIT_FAILURE;
-        a = COS_INT_CAST(cos_new(COS_INT_CLASS, 1));
-        b = COS_INT_CAST(cos_new(COS_INT_CLASS, 2));
-        c = COS_INT_CAST(cos_new(COS_INT_CLASS, 3));
+        a = cos_new(COS_INT_CLASS, 1);
+        b = cos_new(COS_INT_CLASS, 2);
+        c = cos_new(COS_INT_CLASS, 3);
         sum = cos_int_sum(3, a, b, c);
         assert(a && b && c && sum);
         printf("a = %d\n", cos_int_val(a));
