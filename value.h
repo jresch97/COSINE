@@ -57,9 +57,11 @@ COS_VALUE  cos_box_int(int s_int);
 int        cos_unbox_int(COS_VALUE val);
 
 COS_VALUES cos_values_alloc(size_t len);
-size_t     cos_values_len(COS_VALUES values);
-size_t     cos_values_len(COS_VALUES values);
-COS_VALUE  cos_values_at(COS_VALUES values, size_t i);
-void       cos_values_append(COS_VALUES values, COS_VALUE value);
+void       cos_values_free(COS_VALUES vals);
+size_t     cos_values_len(COS_VALUES vals);
+size_t     cos_values_len(COS_VALUES vals);
+COS_VALUE  cos_values_at(COS_VALUES vals, size_t i);
+void       cos_values_store(COS_VALUES vals, COS_VALUE val);
+void       cos_values_reset(COS_VALUES vals);
 
 #endif

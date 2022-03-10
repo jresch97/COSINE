@@ -35,9 +35,11 @@ const char *cos_param_name(COS_PARAM param);
 int         cos_param_type(COS_PARAM param);
 
 COS_PARAMS cos_params_alloc(size_t len);
+void       cos_params_free(COS_PARAMS params);
 size_t     cos_params_len(COS_PARAMS params);
 size_t     cos_params_len(COS_PARAMS params);
 COS_PARAM  cos_params_at(COS_PARAMS params, size_t i);
-void       cos_params_append(COS_PARAMS params, COS_PARAM param);
+void       cos_params_store(COS_PARAMS params, COS_PARAM param);
+void       cos_params_reset(COS_PARAMS params);
 
 #endif

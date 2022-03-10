@@ -42,7 +42,7 @@ COS_CLASS cos_int_class_get()
         info.inst.ctor = cos_int_ctor;
         info.inst.dtor = cos_int_dtor;
         info.inst.params = cos_params_alloc(1);
-        cos_params_append(info.inst.params,
+        cos_params_store(info.inst.params,
                 cos_param_alloc("value", COS_TYPE_INT));
         return cos_class_define(&info);
 }

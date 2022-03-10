@@ -19,6 +19,7 @@
  *
  */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -63,6 +64,12 @@ COS_PARAMS cos_params_alloc(size_t len)
         return params;
 }
 
+void cos_params_free(COS_PARAMS params)
+{
+        if (params) free(params->data);
+        free(params);
+}
+
 size_t cos_params_len(COS_PARAMS params)
 {
         return params->len;
@@ -70,10 +77,12 @@ size_t cos_params_len(COS_PARAMS params)
 
 COS_PARAM cos_params_at(COS_PARAMS params, size_t i)
 {
+        assert(i < params->len);
         return params->data[i];
 }
 
-void cos_params_append(COS_PARAMS params, COS_PARAM param)
+void cos_params_store(COS_PARAMS params, COS_PARAM param)
 {
+        assert(params->i < params->len);
         params->data[params->i++] = param;
 }

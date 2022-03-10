@@ -43,11 +43,11 @@ struct COS_CLASS_INFO_S {
 };
 
 struct COS_CLASS_S {
-        char     *name;
-        COS_CLASS parent, next;
-        size_t    n_inst;
+        char      *name;
+        size_t     n_inst;
+        COS_CLASS  parent, next;
         struct {
-                size_t size;
+                size_t         size;
                 COS_CLASS_CTOR ctor;
                 COS_CLASS_DTOR dtor;
         } class;
@@ -56,10 +56,11 @@ struct COS_CLASS_S {
                 COS_INST_CTOR ctor;
                 COS_INST_DTOR dtor;
                 COS_PARAMS    params;
+                COS_VALUES    vals;
         } inst;
 };
 
-int       cos_class_init();
+void      cos_class_init();
 void      cos_class_term();
 COS_CLASS cos_class(const char *name);
 int       cos_class_lookup(const char *name, COS_CLASS *out);

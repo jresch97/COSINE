@@ -24,6 +24,8 @@
 #include <string.h>
 
 #include "class.h"
+#include "param.h"
+#include "value.h"
 
 #define COS_NAME2CLASS_N 257
 
@@ -39,6 +41,7 @@ static size_t cos_class_name_hash(const char *s)
 
 static COS_CLASS cos_class_alloc(COS_CLASS_INFO *info)
 {
+        size_t n_params;
         COS_CLASS class = malloc(sizeof(*class));
         if (!class) return NULL;
         assert(info->name);
@@ -63,22 +66,33 @@ static COS_CLASS cos_class_alloc(COS_CLASS_INFO *info)
         class->inst.dtor = info->inst.dtor;
         assert(info->inst.params);
         class->inst.params = info->inst.params;
+        n_params = cos_params_len(class->inst.params);
+        class->inst.vals = cos_values_alloc(n_params);
+        if (!class->inst.vals) {
+                free(class->inst.params);
+                free(class->name);
+                free(class);
+                return NULL;
+        }
         return class;
 }
 
 static void cos_class_free(COS_CLASS class)
 {
-        if (class) free(class->name);
+        if (class) {
+                cos_values_free(class->inst.vals);
+                cos_params_free(class->inst.params);
+                free(class->name);
+        }
         free(class);
 }
 
-int cos_class_init()
+void cos_class_init()
 {
         size_t i;
         for (i = 0; i < COS_NAME2CLASS_N; i++) {
                 cos_name2class[i] = NULL;
         }
-        return 1;
 }
 
 void cos_class_term()
@@ -88,8 +102,7 @@ void cos_class_term()
         for (i = 0; i < COS_NAME2CLASS_N; i++) {
                 curr = cos_name2class[i];
                 while (curr) {
-                        tmp = curr;
-                        curr = curr->next;
+                        tmp = curr, curr = curr->next;
                         cos_class_free(tmp);
                 }
         }
@@ -98,9 +111,7 @@ void cos_class_term()
 COS_CLASS cos_class(const char *name)
 {
         COS_CLASS class;
-        if (cos_class_lookup(name, &class)) {
-                return class;
-        }
+        if (cos_class_lookup(name, &class)) return class;
         return NULL;
 }
 

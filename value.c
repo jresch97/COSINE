@@ -114,24 +114,37 @@ struct COS_VALUES_S {
 
 COS_VALUES cos_values_alloc(size_t len)
 {
-        COS_VALUES values = malloc(sizeof(*values));
-        values->i = 0;
-        values->len = len;
-        values->data = malloc(len * sizeof(*values->data));
-        return values;
+        COS_VALUES vals = malloc(sizeof(*vals));
+        vals->i = 0;
+        vals->len = len;
+        vals->data = malloc(len * sizeof(*vals->data));
+        return vals;
 }
 
-size_t cos_values_len(COS_VALUES values)
+void cos_values_free(COS_VALUES vals)
 {
-        return values->len;
+        if (vals) free(vals->data);
+        free(vals);
 }
 
-COS_VALUE cos_values_at(COS_VALUES values, size_t i)
+size_t cos_values_len(COS_VALUES vals)
 {
-        return values->data[i];
+        return vals->len;
 }
 
-void cos_values_append(COS_VALUES values, COS_VALUE value)
+COS_VALUE cos_values_at(COS_VALUES vals, size_t i)
 {
-        values->data[values->i++] = value;
+        assert(i < vals->len);
+        return vals->data[i];
+}
+
+void cos_values_store(COS_VALUES vals, COS_VALUE value)
+{
+        assert(vals->i < vals->len);
+        vals->data[vals->i++] = value;
+}
+
+void cos_values_reset(COS_VALUES vals)
+{
+        vals->i = 0;
 }

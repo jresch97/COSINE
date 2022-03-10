@@ -23,7 +23,7 @@
 
 int cos_init()
 {
-        if (!cos_class_init()) return 0;
+        cos_class_init();
         return 1;
 }
 
