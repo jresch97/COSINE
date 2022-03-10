@@ -38,8 +38,12 @@ int main(void)
         printf("b = %d\n", cos_int_val(b));
         printf("c = %d\n", cos_int_val(c));
         printf("a + b + c = %d\n", cos_int_val(sum));
+        cos_int_print(a);
+        cos_int_print(b);
+        cos_int_print(c);
+        cos_int_print(sum);
         cos_deref_many(3, a, b, c);
-        cos_deref(sum);
+        cos_deref(COS_OBJECT_CAST(sum));
         cos_term();
         return EXIT_SUCCESS;
 }
