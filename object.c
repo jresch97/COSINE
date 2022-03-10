@@ -26,8 +26,6 @@
 #include "param.h"
 #include "object.h"
 
-/* TODO: Keep buffer of COS_VALUES in COS_CLASS to avoid allocations. */
-
 COS_CLASS cos_obj_class_get()
 {
         COS_CLASS class;
@@ -77,7 +75,8 @@ COS_CLASS cos_obj_class(COS_OBJECT this)
 
 void *cos_new(COS_CLASS class, ...)
 {
-        size_t i, n_params;
+        int type;
+        size_t i, n_params, arg;
         va_list args;
         COS_OBJECT obj;
         COS_VALUES vals;
@@ -92,20 +91,9 @@ void *cos_new(COS_CLASS class, ...)
         va_start(args, class);
         for (i = 0; i < n_params; i++) {
                 param = cos_params_at(params, i);
-                switch (cos_param_type(param)) {
-                        case COS_TYPE_CLASS:
-                                cos_values_store(vals,
-                                        cos_box_class(va_arg(args, COS_CLASS)));
-                                break;
-                        case COS_TYPE_C_STR:
-                                cos_values_store(vals, cos_box_c_str(
-                                        va_arg(args, const char *)));
-                                break;
-                        case COS_TYPE_INT:
-                                cos_values_store(vals,
-                                        cos_box_int(va_arg(args, int)));
-                                break;
-                }
+                type = cos_param_type(param);
+                arg = va_arg(args, size_t);
+                cos_values_store(vals, cos_box(type, &arg));
         }
         va_end(args);
         class->inst.ctor(obj, vals);

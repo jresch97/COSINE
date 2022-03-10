@@ -24,6 +24,18 @@
 
 #include "value.h"
 
+COS_VALUE cos_box(int type, void *ptr)
+{
+        switch (type) {
+                case COS_TYPE_VOID:   return cos_box_void();
+                case COS_TYPE_CLASS:  return cos_box_class(*((COS_CLASS *)ptr));
+                case COS_TYPE_OBJECT: return cos_box_object(*((COS_OBJECT *)ptr));
+                case COS_TYPE_C_STR:  return cos_box_c_str(*((const char **)ptr));
+                case COS_TYPE_INT:    return cos_box_int(*((int *)ptr));
+                default: assert(0 && "Unknown type.");
+        }
+}
+
 COS_VALUE cos_box_void()
 {
         COS_VALUE val;

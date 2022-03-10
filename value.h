@@ -44,6 +44,7 @@ struct COS_VALUE_S {
         } data;
 };
 
+COS_VALUE   cos_box(int type, void *ptr);
 COS_VALUE   cos_box_void();
 void        cos_unbox_void(COS_VALUE val);
 COS_VALUE   cos_box_class(COS_CLASS class);
