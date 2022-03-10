@@ -112,14 +112,15 @@ void *cos_new(COS_CLASS class, ...)
         return obj;
 }
 
-void *cos_ref(COS_OBJECT obj)
+void *cos_ref(void *ptr)
 {
-        obj->n_refs++;
-        return obj;
+        COS_OBJECT_CAST(ptr)->n_refs++;
+        return ptr;
 }
 
-void cos_deref(COS_OBJECT obj)
+void cos_deref(void *ptr)
 {
+        COS_OBJECT obj = COS_OBJECT_CAST(ptr);
         if (--obj->n_refs == 0) {
                 obj->class->inst.dtor(obj);
                 free(obj);
@@ -131,18 +132,20 @@ void cos_deref_many(size_t n, ...)
         size_t i;
         va_list args;
         va_start(args, n);
-        for (i = 0; i < n; i++) cos_deref(va_arg(args, COS_OBJECT));
+        for (i = 0; i < n; i++) cos_deref(va_arg(args, void *));
         va_end(args);
 }
 
-void cos_super(COS_OBJECT obj, ...)
+void cos_super(void *ptr, ...)
 {
         size_t i, n_params;
         va_list args;
+        COS_OBJECT obj;
         COS_CLASS class, parent;
         COS_PARAMS params;
         COS_PARAM param;
         COS_VALUES vals;
+        obj = COS_OBJECT_CAST(ptr);
         class = obj->class;
         parent = class->parent;
         if (parent) {
@@ -150,7 +153,7 @@ void cos_super(COS_OBJECT obj, ...)
                 n_params = cos_params_len(params);
                 vals = parent->inst.vals;
                 cos_values_reset(vals);
-                va_start(args, obj);
+                va_start(args, ptr);
                 for (i = 0; i < n_params; i++) {
                         param = cos_params_at(params, i);
                         switch (cos_param_type(param)) {

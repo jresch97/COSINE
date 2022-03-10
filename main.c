@@ -44,7 +44,7 @@ int main(void)
         cos_int_print(c);
         cos_int_print(sum);
         cos_deref_many(3, a, b, c);
-        cos_deref(COS_OBJECT_CAST(sum));
+        cos_deref(sum);
         hello = cos_new(COS_STRING_CLASS, "hello");
         world = cos_new(COS_STRING_CLASS, "world");
         cos_str_print(hello);

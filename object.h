@@ -49,9 +49,9 @@ int       cos_obj_n_refs(COS_OBJECT this);
 COS_CLASS cos_obj_class(COS_OBJECT this);
 
 void      *cos_new(COS_CLASS class, ...);
-void      *cos_ref(COS_OBJECT obj);
-void       cos_deref(COS_OBJECT obj);
+void      *cos_ref(void *ptr);
+void       cos_deref(void *ptr);
 void       cos_deref_many(size_t n, ...);
-void       cos_super(COS_OBJECT obj, ...);
+void       cos_super(void *ptr, ...);
 
 #endif
