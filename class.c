@@ -42,7 +42,7 @@ static size_t cos_class_name_hash(const char *s)
 static COS_CLASS cos_class_alloc(COS_CLASS_INFO *info)
 {
         size_t n_params;
-        COS_CLASS class = malloc(sizeof(*class));
+        COS_CLASS class = malloc(info->class.size);
         if (!class) return NULL;
         assert(info->name);
         class->name = malloc(strlen(info->name) + 1);
