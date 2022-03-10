@@ -61,6 +61,9 @@ int main(void)
         for (i = 0; i < INTS_N; i++) {
                 cos_int_print(ints[i]);
         }
+        for (i = 0; i < INTS_N; i++) {
+                cos_deref(ints[i]);
+        }
         cos_term();
         return EXIT_SUCCESS;
 }
