@@ -76,27 +76,20 @@ COS_CLASS cos_obj_class(COS_OBJECT this)
 void *cos_new(COS_CLASS class, ...)
 {
         int type;
-        size_t i, n_params, arg;
+        size_t i, arg;
         va_list args;
         COS_OBJECT obj;
-        COS_VALUES vals;
-        COS_PARAMS params;
-        COS_PARAM param;
         obj = malloc(class->inst.size);
         obj->class = class;
-        params = class->inst.params;
-        n_params = cos_params_len(params);
-        vals = class->inst.vals;
-        cos_values_reset(vals);
+        cos_values_reset(class->inst.vals);
         va_start(args, class);
-        for (i = 0; i < n_params; i++) {
-                param = cos_params_at(params, i);
-                type = cos_param_type(param);
+        for (i = 0; i < cos_params_len(class->inst.params); i++) {
                 arg = va_arg(args, size_t);
-                cos_values_store(vals, cos_box(type, &arg));
+                type = cos_param_type(cos_params_at(class->inst.params, i));
+                cos_values_store(class->inst.vals, cos_box(type, &arg));
         }
         va_end(args);
-        class->inst.ctor(obj, vals);
+        class->inst.ctor(obj, class->inst.vals);
         return obj;
 }
 
@@ -126,40 +119,20 @@ void cos_deref_many(size_t n, ...)
 
 void cos_super(void *ptr, ...)
 {
-        size_t i, n_params;
+        int type;
+        size_t i, arg;
         va_list args;
-        COS_OBJECT obj;
-        COS_CLASS class, parent;
-        COS_PARAMS params;
-        COS_PARAM param;
-        COS_VALUES vals;
-        obj = COS_OBJECT_CAST(ptr);
-        class = obj->class;
-        parent = class->parent;
+        COS_OBJECT obj = COS_OBJECT_CAST(ptr);
+        COS_CLASS class = obj->class, parent = class->parent;
         if (parent) {
-                params = parent->inst.params;
-                n_params = cos_params_len(params);
-                vals = parent->inst.vals;
-                cos_values_reset(vals);
+                cos_values_reset(parent->inst.vals);
                 va_start(args, ptr);
-                for (i = 0; i < n_params; i++) {
-                        param = cos_params_at(params, i);
-                        switch (cos_param_type(param)) {
-                                case COS_TYPE_CLASS:
-                                        cos_values_store(vals, cos_box_class(
-                                                va_arg(args, COS_CLASS)));
-                                        break;
-                                case COS_TYPE_C_STR:
-                                        cos_values_store(vals, cos_box_c_str(
-                                                va_arg(args, const char *)));
-                                        break;
-                                case COS_TYPE_INT:
-                                        cos_values_store(vals, cos_box_int(
-                                                va_arg(args, int)));
-                                        break;
-                        }
+                for (i = 0; i < cos_params_len(parent->inst.params); i++) {
+                        arg = va_arg(args, size_t);
+                        type = cos_param_type(cos_params_at(parent->inst.params, i));
+                        cos_values_store(parent->inst.vals, cos_box(type, &arg));
                 }
                 va_end(args);
+                parent->inst.ctor(obj, parent->inst.vals);
         }
-        parent->inst.ctor(obj, vals);
 }
