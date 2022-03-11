@@ -26,46 +26,46 @@
 
 #include "param.h"
 
-COS_PARAM cos_param_alloc(const char *name, int type)
+struct cos_params_s {
+        size_t     i, len;
+        cos_param *data;
+};
+
+cos_param cos_param_alloc(const char *name, int type)
 {
-        COS_PARAM param = malloc(sizeof(*param));
+        cos_param param = malloc(sizeof(*param));
         param->name = malloc(strlen(name) + 1);
         strcpy(param->name, name);
         param->type = type;
         return param;
 }
 
-void cos_param_free(COS_PARAM param)
+void cos_param_free(cos_param param)
 {
         if (param) free(param->name);
         free(param);
 }
 
-const char *cos_param_name(COS_PARAM param)
+const char *cos_param_name(cos_param param)
 {
         return param->name;
 }
 
-int cos_param_type(COS_PARAM param)
+int cos_param_type(cos_param param)
 {
         return param->type;
 }
 
-struct COS_PARAMS_S {
-        size_t     i, len;
-        COS_PARAM *data;
-};
-
-COS_PARAMS cos_params(size_t len, ...)
+cos_params cos_params_list(size_t n, ...)
 {
         size_t i;
-        va_list args;
-        COS_PARAMS params;
-        const char *name;
         int type;
-        params = cos_params_alloc(len);
-        va_start(args, len);
-        for (i = 0; i < len; i++) {
+        va_list args;
+        cos_params params;
+        const char *name;
+        params = cos_params_alloc(n);
+        va_start(args, n);
+        for (i = 0; i < n; i++) {
                 name = va_arg(args, const char *);
                 type = va_arg(args, int);
                 cos_params_store(params, cos_param_alloc(name, type));
@@ -74,16 +74,16 @@ COS_PARAMS cos_params(size_t len, ...)
         return params;
 }
 
-COS_PARAMS cos_params_alloc(size_t len)
+cos_params cos_params_alloc(size_t len)
 {
-        COS_PARAMS params = malloc(sizeof(*params));
+        cos_params params = malloc(sizeof(*params));
         params->i = 0;
         params->len = len;
         params->data = malloc(len * sizeof(*params->data));
         return params;
 }
 
-void cos_params_free(COS_PARAMS params)
+void cos_params_free(cos_params params)
 {
         size_t i;
         if (params) {
@@ -95,18 +95,18 @@ void cos_params_free(COS_PARAMS params)
         free(params);
 }
 
-size_t cos_params_len(COS_PARAMS params)
+size_t cos_params_len(cos_params params)
 {
         return params->len;
 }
 
-COS_PARAM cos_params_at(COS_PARAMS params, size_t i)
+cos_param cos_params_at(cos_params params, size_t i)
 {
         assert(i < params->len);
         return params->data[i];
 }
 
-void cos_params_store(COS_PARAMS params, COS_PARAM param)
+void cos_params_store(cos_params params, cos_param param)
 {
         assert(params->i < params->len);
         params->data[params->i++] = param;

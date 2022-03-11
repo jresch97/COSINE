@@ -27,90 +27,90 @@
 #include "param.h"
 #include "object.h"
 
-COS_CLASS cos_obj_class_get()
+static cos_class g_cos_object_class = NULL;
+
+cos_class cos_object_class_get()
 {
-        static COS_CLASS class = NULL;
-        COS_CLASS_INFO info;
-        if (class) return class;
-        if (cos_class_lookup(COS_OBJECT_CLASS_NAME, &class)) return class;
-        info.name = COS_OBJECT_CLASS_NAME;
-        info.parent = NULL;
-        info.class.size = sizeof(struct COS_OBJECT_CLASS_S);
-        info.class.ctor = cos_obj_class_ctor;
-        info.class.dtor = cos_obj_class_dtor;
-        info.inst.size = sizeof(struct COS_OBJECT_S);
-        info.inst.ctor = cos_obj_ctor;
-        info.inst.dtor = cos_obj_dtor;
-        info.inst.params = cos_params_alloc(0);
-        return cos_class_define(&info);
+        cos_class cls;
+        cos_class_spec spec;
+        if (g_cos_object_class) return g_cos_object_class;
+        if (cos_class_lookup(COS_OBJECT_NAME, &cls)) return cls;
+        spec.name        = COS_OBJECT_NAME;
+        spec.parent      = NULL;
+        spec.cls.size    = sizeof(struct cos_object_class_s);
+        spec.cls.ctor    = cos_object_class_construct;
+        spec.cls.dtor    = cos_object_class_destruct;
+        spec.inst.size   = sizeof(struct cos_object_s);
+        spec.inst.ctor   = cos_object_construct;
+        spec.inst.dtor   = cos_object_destruct;
+        spec.inst.params = cos_params_alloc(0); /*cos_params_list(0);*/
+        return cos_class_define(&spec);
 }
 
-void cos_obj_class_ctor(COS_CLASS class)
+void cos_object_class_construct(cos_class cls)
+{
+        g_cos_object_class = cls;
+}
+
+void cos_object_class_destruct(cos_class cls)
+{
+        g_cos_object_class = NULL;
+}
+
+void cos_object_construct(cos_object obj, cos_values vals)
+{
+        COS_OBJECT_N_REFS(obj) = 1;
+}
+
+void cos_object_destruct(cos_object obj)
 {
         /* Nothing to do. */
 }
 
-void cos_obj_class_dtor(COS_CLASS class)
-{
-        /* Nothing to do. */
-}
+/* TODO: Move to cosine? */
 
-void cos_obj_ctor(COS_OBJECT this, COS_VALUES values)
-{
-        this->n_refs = 1;
-}
-
-void cos_obj_dtor(COS_OBJECT this)
-{
-        /* Nothing to do. */
-}
-
-int cos_obj_n_refs(COS_OBJECT this)
-{
-        return this->n_refs;
-}
-
-COS_CLASS cos_obj_class(COS_OBJECT this)
-{
-        return this->class;
-}
-
-void *cos_new(COS_CLASS class, ...)
+static void cos_store_args(va_list args, cos_params params, cos_values vals)
 {
         int type;
-        va_list args;
-        size_t i, arg;
-        COS_OBJECT obj;
-        COS_VALUES vals;
-        COS_PARAMS params;
-        obj = malloc(class->inst.size);
-        obj->class = class;
-        vals = class->inst.vals;
+        cos_param param;
+        size_t i, arg, n_params;
         cos_values_reset(vals);
-        params = class->inst.params;
-        va_start(args, class);
-        for (i = 0; i < cos_params_len(params); i++) {
-                arg = va_arg(args, size_t);
-                type = cos_param_type(cos_params_at(params, i));
+        n_params = cos_params_len(params);
+        for (i = 0; i < n_params; i++) {
+                param = cos_params_at(params, i);
+                arg   = va_arg(args, size_t);
+                type  = cos_param_type(param);
                 cos_values_store(vals, cos_box(type, &arg));
         }
+}
+
+void *cos_new(cos_class cls, ...)
+{
+        va_list args;
+        cos_object obj;
+        cos_values vals;
+        obj = malloc(cls->inst.size);
+        obj->cls = cls;
+        vals = cls->inst.vals;
+        va_start(args, cls);
+        cos_store_args(args, cls->inst.params, vals);
         va_end(args);
-        class->inst.ctor(obj, vals);
+        cls->inst.ctor(obj, vals);
         return obj;
 }
 
-void *cos_ref(void *ptr)
+void *cos_ref(void *obj)
 {
-        COS_OBJECT_CAST(ptr)->n_refs++;
-        return ptr;
+        COS_OBJECT_CAST(obj)->n_refs++;
+        return obj;
 }
 
-void cos_deref(void *ptr)
+void cos_deref(void *obj)
 {
-        COS_OBJECT obj = COS_OBJECT_CAST(ptr);
-        if (--obj->n_refs == 0) {
-                obj->class->inst.dtor(obj);
-                free(obj);
+        cos_object inst = COS_OBJECT_CAST(obj);
+        if (--inst->n_refs == 0) {
+                inst->cls->inst.dtor(inst);
+                free(inst);
         }
 }
 
@@ -119,42 +119,34 @@ void cos_deref_many(size_t n, ...)
         size_t i;
         va_list args;
         va_start(args, n);
-        for (i = 0; i < n; i++) cos_deref(va_arg(args, void *));
-        va_end(args);
-}
-
-void cos_super_class_ctor(COS_CLASS parent)
-{
-        if (parent) parent->class.ctor(parent);
-}
-
-void cos_super_class_dtor(COS_CLASS parent)
-{
-        if (parent) parent->class.dtor(parent);
-}
-
-void cos_super_ctor(COS_CLASS parent, void *ptr, ...)
-{
-        int type;
-        va_list args;
-        size_t i, arg;
-        COS_VALUES vals;
-        COS_PARAMS params;
-        if (!parent) return;
-        vals = parent->inst.vals;
-        cos_values_reset(vals);
-        params = parent->inst.params;
-        va_start(args, ptr);
-        for (i = 0; i < cos_params_len(params); i++) {
-                arg = va_arg(args, size_t);
-                type = cos_param_type(cos_params_at(params, i));
-                cos_values_store(vals, cos_box(type, &arg));
+        for (i = 0; i < n; i++) {
+                cos_deref(va_arg(args, void *));
         }
         va_end(args);
-        parent->inst.ctor(COS_OBJECT_CAST(ptr), vals);
 }
 
-void cos_super_dtor(COS_CLASS parent, void *ptr)
+void cos_super_class_construct(cos_class cls)
 {
-        if (parent) parent->inst.dtor(COS_OBJECT_CAST(ptr));
+        cls->cls.ctor(cls);
+}
+
+void cos_super_class_destruct(cos_class cls)
+{
+        cls->cls.dtor(cls);
+}
+
+void cos_super_construct(cos_class cls, void *ptr, ...)
+{
+        va_list args;
+        cos_values vals;
+        vals = cls->inst.vals;
+        va_start(args, ptr);
+        cos_store_args(args, cls->inst.params, vals);
+        va_end(args);
+        cls->inst.ctor(COS_OBJECT_CAST(ptr), vals);
+}
+
+void cos_super_destruct(cos_class cls, void *ptr)
+{
+        cls->inst.dtor(COS_OBJECT_CAST(ptr));
 }

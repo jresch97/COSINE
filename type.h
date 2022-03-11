@@ -23,10 +23,10 @@
 #define COS_TYPE_H
 
 enum COS_TYPES {
-        COS_TYPE_VOID,
+        COS_TYPE_VOID = 0,
         COS_TYPE_CLASS,
         COS_TYPE_OBJECT,
-        COS_TYPE_C_STR,
+        COS_TYPE_STRING,
         COS_TYPE_CHAR,
         COS_TYPE_SHORT,
         COS_TYPE_INT,
@@ -35,23 +35,24 @@ enum COS_TYPES {
         COS_TYPE_USHORT,
         COS_TYPE_UINT,
         COS_TYPE_ULONG,
-        COS_TYPE_SIZE_T
+        COS_TYPE_SIZE_T,
+        COS_TYPE_END
 };
 
-const char *cos_type_str(int type);
+const char *cos_type_name(int type);
 
-typedef struct COS_CLASS_S        *COS_CLASS;
-typedef struct COS_CLASS_INFO_S    COS_CLASS_INFO;
-typedef struct COS_OBJECT_CLASS_S *COS_OBJECT_CLASS;
-typedef struct COS_OBJECT_S       *COS_OBJECT;
-typedef struct COS_PARAM_S        *COS_PARAM;
-typedef struct COS_PARAMS_S       *COS_PARAMS;
-typedef struct COS_VALUE_S         COS_VALUE;
-typedef struct COS_VALUES_S       *COS_VALUES;
+typedef struct cos_class_s        *cos_class;
+typedef struct cos_class_spec_s    cos_class_spec;
+typedef struct cos_object_class_s *cos_object_class;
+typedef struct cos_object_s       *cos_object;
+typedef struct cos_param_s        *cos_param;
+typedef struct cos_params_s       *cos_params;
+typedef struct cos_value_s         cos_value;
+typedef struct cos_values_s       *cos_values;
 
-typedef void (*COS_CLASS_CTOR)(COS_CLASS);
-typedef void (*COS_CLASS_DTOR)(COS_CLASS);
-typedef void (*COS_INST_CTOR) (COS_OBJECT, COS_VALUES);
-typedef void (*COS_INST_DTOR) (COS_OBJECT);
+typedef void (*cos_class_ctor)(cos_class);
+typedef void (*cos_class_dtor)(cos_class);
+typedef void (*cos_inst_ctor)(cos_object, cos_values);
+typedef void (*cos_inst_dtor)(cos_object);
 
 #endif

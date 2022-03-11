@@ -43,9 +43,7 @@ COS_CLASS cos_str_class_get()
         info.inst.size = sizeof(struct COS_STRING_S);
         info.inst.ctor = cos_str_ctor;
         info.inst.dtor = cos_str_dtor;
-        info.inst.params = cos_params_alloc(1);
-        cos_params_store(info.inst.params,
-                cos_param_alloc("c_str", COS_TYPE_C_STR));
+        info.inst.params = cos_params_list(1);
         return cos_class_define(&info);
 }
 

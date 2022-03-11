@@ -22,34 +22,32 @@
 #ifndef COS_STRING_H
 #define COS_STRING_H
 
-#include "object.h"
+#include "../object.h"
 
-typedef struct COS_STRING_CLASS_S *COS_STRING_CLASS;
-typedef struct COS_STRING_S       *COS_STRING;
+#define COS_STRING_NAME       "String"
+#define COS_STRING            (cos_string_class_get())
+#define COS_STRING_CAST(obj)  ((cos_string)obj)
+#define COS_STRING_LEN(obj)   COS_STRING_CAST(obj)->len
+#define COS_STRING_C_STR(obj) COS_STRING_CAST(obj)->c_str
 
-#define COS_STRING_CLASS      (cos_str_class_get())
-#define COS_STRING_CLASS_NAME "String"
+typedef struct cos_string_class_s *cos_string_class;
+typedef struct cos_string_s       *cos_string;
 
-struct COS_STRING_CLASS_S {
-        struct COS_CLASS_S class;
+struct cos_string_class_s {
+        struct cos_class_s cls;
 };
 
-COS_CLASS cos_str_class_get();
-void      cos_str_class_ctor(COS_CLASS class);
-void      cos_str_class_dtor(COS_CLASS class);
-
-#define COS_STRING_CAST(obj) ((COS_STRING)obj)
-
-struct COS_STRING_S {
-        struct COS_OBJECT_S obj;
+struct cos_string_s {
+        struct cos_object_s obj;
         size_t              len;
         const char         *c_str;
 };
 
-void        cos_str_ctor(COS_OBJECT this, COS_VALUES values);
-void        cos_str_dtor(COS_OBJECT this);
-const char *cos_str_c_str(COS_STRING this);
-size_t      cos_str_len(COS_STRING this);
-void        cos_str_print(COS_STRING this);
+cos_class cos_string_class_get();
+void      cos_string_class_construct(cos_class cls);
+void      cos_string_class_destruct(cos_class cls);
+void      cos_string_construct(cos_object obj, cos_values values);
+void      cos_string_dtor(cos_object obj);
+void      cos_string_print(cos_string str);
 
 #endif

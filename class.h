@@ -22,48 +22,48 @@
 #ifndef COS_CLASS_H
 #define COS_CLASS_H
 
-#include "type.h"
+#include "value.h"
 
-#define COS_CLASS_CAST(class) ((COS_CLASS)class)
+#define COS_CLASS_CAST(cls) ((cos_class)cls)
+#define COS_CLASS_NAME(cls) COS_CLASS_CAST(cls)->name
 
-struct COS_CLASS_INFO_S {
+struct cos_class_spec_s {
         const char *name;
-        COS_CLASS   parent;
+        cos_class   parent;
         struct {
                 size_t         size;
-                COS_CLASS_CTOR ctor;
-                COS_CLASS_DTOR dtor;
-        } class;
+                cos_class_ctor ctor;
+                cos_class_dtor dtor;
+        } cls;
         struct {
                 size_t        size;
-                COS_INST_CTOR ctor;
-                COS_INST_DTOR dtor;
-                COS_PARAMS    params;
+                cos_inst_ctor ctor;
+                cos_inst_dtor dtor;
+                cos_params    params;
         } inst;
 };
 
-struct COS_CLASS_S {
-        char      *name;
-        size_t     n_inst;
-        COS_CLASS  parent, next;
+struct cos_class_s {
+        char     *name;
+        size_t    n_objs;
+        cos_class parent, next;
         struct {
                 size_t         size;
-                COS_CLASS_CTOR ctor;
-                COS_CLASS_DTOR dtor;
-        } class;
+                cos_class_ctor ctor;
+                cos_class_dtor dtor;
+        } cls;
         struct {
                 size_t        size;
-                COS_INST_CTOR ctor;
-                COS_INST_DTOR dtor;
-                COS_PARAMS    params;
-                COS_VALUES    vals;
+                cos_inst_ctor ctor;
+                cos_inst_dtor dtor;
+                cos_params    params;
+                cos_values    vals;
         } inst;
 };
 
 void      cos_class_init();
 void      cos_class_term();
-COS_CLASS cos_class(const char *name);
-int       cos_class_lookup(const char *name, COS_CLASS *out);
-COS_CLASS cos_class_define(COS_CLASS_INFO *info);
+int       cos_class_lookup(const char *name, cos_class *out);
+cos_class cos_class_define(cos_class_spec *spec);
 
 #endif

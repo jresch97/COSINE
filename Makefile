@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -ansi -pedantic -Wall -fPIC -O2 -DNDEBUG
+CFLAGS = -ansi -pedantic -Wall -fPIC -g
 ARFLAGS = rcs
 SRC = cosine.c object.c class.c param.c value.c type.c
 OBJ = cosine.o object.o class.o param.o value.o type.o

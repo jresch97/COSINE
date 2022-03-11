@@ -29,7 +29,7 @@
 
 #define COS_NAME2CLASS_N 257
 
-static COS_CLASS cos_name2class[COS_NAME2CLASS_N];
+static cos_class cos_name2class[COS_NAME2CLASS_N];
 
 static size_t cos_class_name_hash(const char *s)
 {
@@ -39,53 +39,53 @@ static size_t cos_class_name_hash(const char *s)
         return h;
 }
 
-static COS_CLASS cos_class_alloc(COS_CLASS_INFO *info)
+static cos_class cos_class_alloc(cos_class_spec *spec)
 {
         size_t n_params;
-        COS_CLASS class = malloc(info->class.size);
-        if (!class) return NULL;
-        assert(info->name);
-        class->name = malloc(strlen(info->name) + 1);
-        if (!class->name) {
-                free(class);
+        cos_class cls = malloc(spec->cls.size);
+        if (!cls) return NULL;
+        assert(spec->name);
+        cls->name = malloc(strlen(spec->name) + 1);
+        if (!cls->name) {
+                free(cls);
                 return NULL;
         }
-        strcpy(class->name, info->name);
-        class->parent = info->parent;
-        class->next = NULL;
-        class->n_inst = 0;
-        class->class.size = info->class.size;
-        assert(info->class.ctor);
-        class->class.ctor = info->class.ctor;
-        assert(info->class.dtor);
-        class->class.dtor = info->class.dtor;
-        class->inst.size = info->inst.size;
-        assert(info->inst.ctor);
-        class->inst.ctor = info->inst.ctor;
-        assert(info->inst.dtor);
-        class->inst.dtor = info->inst.dtor;
-        assert(info->inst.params);
-        class->inst.params = info->inst.params;
-        n_params = cos_params_len(class->inst.params);
-        class->inst.vals = cos_values_alloc(n_params);
-        if (!class->inst.vals) {
-                free(class->inst.params);
-                free(class->name);
-                free(class);
+        strcpy(cls->name, spec->name);
+        cls->parent = spec->parent;
+        cls->next = NULL;
+        cls->n_objs = 0;
+        cls->cls.size = spec->cls.size;
+        assert(spec->cls.ctor);
+        cls->cls.ctor = spec->cls.ctor;
+        assert(spec->cls.dtor);
+        cls->cls.dtor = spec->cls.dtor;
+        cls->inst.size = spec->inst.size;
+        assert(spec->inst.ctor);
+        cls->inst.ctor = spec->inst.ctor;
+        assert(spec->inst.dtor);
+        cls->inst.dtor = spec->inst.dtor;
+        assert(spec->inst.params);
+        cls->inst.params = spec->inst.params;
+        n_params = cos_params_len(cls->inst.params);
+        cls->inst.vals = cos_values_alloc(n_params);
+        if (!cls->inst.vals) {
+                free(cls->inst.params);
+                free(cls->name);
+                free(cls);
                 return NULL;
         }
-        class->class.ctor(class);
-        return class;
+        cls->cls.ctor(cls);
+        return cls;
 }
 
-static void cos_class_free(COS_CLASS class)
+static void cos_class_free(cos_class cls)
 {
-        if (class) {
-                cos_values_free(class->inst.vals);
-                cos_params_free(class->inst.params);
-                free(class->name);
+        if (cls) {
+                cos_values_free(cls->inst.vals);
+                cos_params_free(cls->inst.params);
+                free(cls->name);
         }
-        free(class);
+        free(cls);
 }
 
 void cos_class_init()
@@ -99,7 +99,7 @@ void cos_class_init()
 void cos_class_term()
 {
         size_t i;
-        COS_CLASS curr, tmp;
+        cos_class curr, tmp;
         for (i = 0; i < COS_NAME2CLASS_N; i++) {
                 curr = cos_name2class[i];
                 while (curr) {
@@ -109,17 +109,10 @@ void cos_class_term()
         }
 }
 
-COS_CLASS cos_class(const char *name)
-{
-        COS_CLASS class;
-        if (cos_class_lookup(name, &class)) return class;
-        return NULL;
-}
-
-int cos_class_lookup(const char *name, COS_CLASS *out)
+int cos_class_lookup(const char *name, cos_class *out)
 {
         size_t hash;
-        COS_CLASS curr;
+        cos_class curr;
         hash = cos_class_name_hash(name);
         curr = cos_name2class[hash % COS_NAME2CLASS_N];
         while (curr) {
@@ -132,11 +125,11 @@ int cos_class_lookup(const char *name, COS_CLASS *out)
         return 0;
 }
 
-COS_CLASS cos_class_define(COS_CLASS_INFO *info)
+cos_class cos_class_define(cos_class_spec *spec)
 {
         size_t hash;
-        COS_CLASS class, curr, prev;
-        class = cos_class_alloc(info);
+        cos_class class, curr, prev;
+        class = cos_class_alloc(spec);
         if (!class) return NULL;
         hash = cos_class_name_hash(class->name);
         if (!cos_name2class[hash % COS_NAME2CLASS_N]) {

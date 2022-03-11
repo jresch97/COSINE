@@ -25,36 +25,36 @@
 #include "type.h"
 #include "class.h"
 
-#define COS_OBJECT_CLASS_NAME "Object"
-#define COS_OBJECT_TYPE       (cos_obj_class_get())
-#define COS_OBJECT_CLASS(obj) (((COS_OBJECT)obj)->class)
+#define COS_OBJECT_NAME        "Object"
+#define COS_OBJECT             (cos_object_class_get())
+#define COS_OBJECT_CAST(obj)   ((cos_object)obj)
+#define COS_OBJECT_N_REFS(obj) COS_OBJECT_CAST(obj)->n_refs
+#define COS_OBJECT_CLASS(obj)  COS_OBJECT_CAST(obj)->cls
 
-struct COS_OBJECT_CLASS_S {
-        struct COS_CLASS_S class;
+struct cos_object_class_s {
+        struct cos_class_s cls;
 };
 
-COS_CLASS cos_obj_class_get();
-void      cos_obj_class_ctor(COS_CLASS class);
-void      cos_obj_class_dtor(COS_CLASS class);
-
-#define COS_OBJECT_CAST(obj) ((COS_OBJECT)obj)
-
-struct COS_OBJECT_S {
+struct cos_object_s {
+        cos_class cls;
         size_t    n_refs;
-        COS_CLASS class;
 };
 
-void      cos_obj_ctor(COS_OBJECT this, COS_VALUES values);
-void      cos_obj_dtor(COS_OBJECT this);
-int       cos_obj_n_refs(COS_OBJECT this);
-COS_CLASS cos_obj_class(COS_OBJECT this);
-void     *cos_new(COS_CLASS class, ...);
-void     *cos_ref(void *ptr);
-void      cos_deref(void *ptr);
-void      cos_deref_many(size_t n, ...);
-void      cos_super_class_ctor(COS_CLASS parent);
-void      cos_super_class_dtor(COS_CLASS parent);
-void      cos_super_ctor(COS_CLASS parent, void *ptr, ...);
-void      cos_super_dtor(COS_CLASS parent, void *ptr);
+cos_class cos_object_class_get();
+void      cos_object_class_construct(cos_class cls);
+void      cos_object_class_destruct(cos_class cls);
+void      cos_object_construct(cos_object obj, cos_values vals);
+void      cos_object_destruct(cos_object obj);
+
+/* TODO: Move to cosine? */
+
+void *cos_new(cos_class cls, ...);
+void *cos_ref(void *obj);
+void  cos_deref(void *obj);
+void  cos_deref_many(size_t n, ...);
+void  cos_super_class_construct(cos_class cls);
+void  cos_super_class_destruct(cos_class cls);
+void  cos_super_construct(cos_class cls, void *obj, ...);
+void  cos_super_destruct(cos_class cls, void *obj);
 
 #endif
