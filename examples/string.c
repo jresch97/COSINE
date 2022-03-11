@@ -29,57 +29,46 @@
 #include "param.h"
 #include "value.h"
 
-COS_CLASS cos_str_class_get()
+static cos_class g_cos_string_class = NULL;
+
+cos_class cos_string_class_get()
 {
-        static COS_CLASS class = NULL;
-        COS_CLASS_INFO info;
-        if (class) return class;
-        if (cos_class_lookup(COS_STRING_CLASS_NAME, &class)) return class;
-        info.name = COS_STRING_CLASS_NAME;
-        info.parent = COS_OBJECT_CLASS;
-        info.class.size = sizeof(struct COS_STRING_CLASS_S);
-        info.class.ctor = cos_str_class_ctor;
-        info.class.dtor = cos_str_class_dtor;
-        info.inst.size = sizeof(struct COS_STRING_S);
-        info.inst.ctor = cos_str_ctor;
-        info.inst.dtor = cos_str_dtor;
-        info.inst.params = cos_params_list(1);
-        return cos_class_define(&info);
+        cos_class cls;
+        cos_class_spec spec;
+        if (g_cos_string_class) return g_cos_string_class;
+        if (cos_class_lookup(COS_STRING_NAME, &cls)) return cls;
+        spec.name        = COS_STRING_NAME;
+        spec.parent      = COS_OBJECT;
+        spec.cls.size    = sizeof(struct cos_string_class_s);
+        spec.cls.ctor    = cos_string_class_construct;
+        spec.cls.dtor    = cos_string_class_destruct;
+        spec.inst.size   = sizeof(struct cos_string_s);
+        spec.inst.ctor   = cos_string_construct;
+        spec.inst.dtor   = cos_string_destruct;
+        spec.inst.params = cos_params_list(1, "string", COS_TYPE_STRING);
+        return cos_class_define(&spec);
 }
 
-void cos_str_class_ctor(COS_CLASS class)
+void cos_string_class_construct(cos_class cls)
 {
-        cos_obj_class_ctor(class);
+        g_cos_string_class = cls;
+        cos_super_class_construct(COS_OBJECT);
 }
 
-void cos_str_class_dtor(COS_CLASS class)
+void cos_string_class_destruct(cos_class cls)
 {
-        cos_obj_class_dtor(class);
+        g_cos_string_class = NULL;
+        cos_super_class_destruct(COS_OBJECT);
 }
 
-void cos_str_ctor(COS_OBJECT this, COS_VALUES vals)
+void cos_string_construct(cos_object obj, cos_values vals)
 {
-        cos_super(this);
-        COS_STRING_CAST(this)->c_str = cos_unbox_c_str(cos_values_at(vals, 0));
-        COS_STRING_CAST(this)->len = strlen(COS_STRING_CAST(this)->c_str);
+        cos_super_construct(COS_OBJECT, obj);
+        COS_STRING_C_STR(obj) = cos_unbox_string(cos_values_at(vals, 0));
+        COS_STRING_LEN(obj) = strlen(COS_STRING_C_STR(obj));
 }
 
-void cos_str_dtor(COS_OBJECT this)
+void cos_string_destruct(cos_object obj)
 {
-        /* Nothing to do. */
-}
-
-const char *cos_str_c_str(COS_STRING this)
-{
-        return this->c_str;
-}
-
-size_t cos_str_len(COS_STRING this)
-{
-        return this->len;
-}
-
-void cos_str_print(COS_STRING this)
-{
-        printf("%s\n", this->c_str);
+        cos_super_destruct(COS_OBJECT, obj);
 }

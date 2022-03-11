@@ -25,8 +25,6 @@
 #include <stdlib.h>
 
 #include "int.h"
-#include "param.h"
-#include "value.h"
 
 static cos_class g_cos_int_class = NULL;
 

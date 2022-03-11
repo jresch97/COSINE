@@ -7,7 +7,7 @@
 int main(void)
 {
         cos_object obj, obj_ref;
-        cos_class obj_cls;
+        cos_class  obj_cls;
 
         obj = cos_new(COS_OBJECT);
         assert(obj);

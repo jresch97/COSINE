@@ -86,7 +86,7 @@ cos_value cos_box_string(const char *str)
         return val;
 }
 
-const char *cos_unbox_c_str(cos_value val)
+const char *cos_unbox_string(cos_value val)
 {
         assert(val.type == COS_TYPE_STRING);
         return val.data.str;

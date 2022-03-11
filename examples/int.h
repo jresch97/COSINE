@@ -22,7 +22,7 @@
 #ifndef COS_INT_H
 #define COS_INT_H
 
-#include "../object.h"
+#include <cosine.h>
 
 #define COS_INT_NAME       "Integer"
 #define COS_INT            (cos_int_class_get())

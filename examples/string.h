@@ -22,7 +22,7 @@
 #ifndef COS_STRING_H
 #define COS_STRING_H
 
-#include "../object.h"
+#include <cosine.h>
 
 #define COS_STRING_NAME       "String"
 #define COS_STRING            (cos_string_class_get())
@@ -47,7 +47,6 @@ cos_class cos_string_class_get();
 void      cos_string_class_construct(cos_class cls);
 void      cos_string_class_destruct(cos_class cls);
 void      cos_string_construct(cos_object obj, cos_values values);
-void      cos_string_dtor(cos_object obj);
-void      cos_string_print(cos_string str);
+void      cos_string_destruct(cos_object obj);
 
 #endif

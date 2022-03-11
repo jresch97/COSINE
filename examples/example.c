@@ -23,9 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../cosine.h"
-#include "../examples/int.h"
-#include "../examples/string.h"
+#include "int.h"
+#include "string.h"
 
 #define INTS_N 10
 
