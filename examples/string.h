@@ -34,7 +34,7 @@ typedef struct cos_string_class_s *cos_string_class;
 typedef struct cos_string_s       *cos_string;
 
 struct cos_string_class_s {
-        struct cos_class_s cls;
+        struct cos_object_class_s cls;
 };
 
 struct cos_string_s {

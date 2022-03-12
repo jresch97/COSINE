@@ -25,14 +25,18 @@
 #include "type.h"
 #include "class.h"
 
-#define COS_OBJECT_NAME        "Object"
-#define COS_OBJECT             (cos_object_class_get())
-#define COS_OBJECT_CAST(obj)   ((cos_object)obj)
-#define COS_OBJECT_N_REFS(obj) COS_OBJECT_CAST(obj)->n_refs
-#define COS_OBJECT_CLASS(obj)  COS_OBJECT_CAST(obj)->cls
+#define COS_OBJECT_NAME            "Object"
+#define COS_OBJECT                 (cos_object_class_get())
+#define COS_OBJECT_CAST(obj)       ((cos_object)obj)
+#define COS_OBJECT_CLASS_CAST(cls) ((cos_object_class)cls)
+
+typedef size_t (*cos_object_hash_fn)(cos_object);
+typedef int    (*cos_object_equals_fn)(cos_object, cos_object);
 
 struct cos_object_class_s {
-        struct cos_class_s cls;
+        struct cos_class_s   cls;
+        cos_object_hash_fn   hash;
+        cos_object_equals_fn equals;
 };
 
 struct cos_object_s {
@@ -45,16 +49,19 @@ void      cos_object_class_construct(cos_class cls);
 void      cos_object_class_destruct(cos_class cls);
 void      cos_object_construct(cos_object obj, cos_values vals);
 void      cos_object_destruct(cos_object obj);
+size_t    cos_object_hash(cos_object obj);
+int       cos_object_equals(cos_object obj, cos_object other);
 
 /* TODO: Move to cosine? */
 
-void *cos_new(cos_class cls, ...);
-void *cos_ref(void *obj);
-void  cos_deref(void *obj);
-void  cos_deref_many(size_t n, ...);
-void  cos_super_class_construct(cos_class parent, void *cls);
-void  cos_super_class_destruct(cos_class parent, void *cls);
-void  cos_super_construct(cos_class cls, void *obj, ...);
-void  cos_super_destruct(cos_class cls, void *obj);
+cos_class cos_class_of(void *obj);
+void     *cos_new(cos_class cls, ...);
+void     *cos_ref(void *obj);
+void      cos_deref(void *obj);
+void      cos_deref_many(size_t n, ...);
+void      cos_super_class_construct(cos_class parent, void *cls);
+void      cos_super_class_destruct(cos_class parent, void *cls);
+void      cos_super_construct(cos_class cls, void *obj, ...);
+void      cos_super_destruct(cos_class cls, void *obj);
 
 #endif

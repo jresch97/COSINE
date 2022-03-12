@@ -30,6 +30,16 @@
 
 static cos_class g_cos_object_class = NULL;
 
+static size_t cos_object_hash_method(cos_object obj)
+{
+        return (size_t)obj;
+}
+
+static int cos_object_equals_method(cos_object obj, cos_object other)
+{
+        return obj == other;
+}
+
 cos_class cos_object_class_get()
 {
         cos_class cls;
@@ -51,6 +61,8 @@ cos_class cos_object_class_get()
 void cos_object_class_construct(cos_class cls)
 {
         if (!g_cos_object_class) g_cos_object_class = cls;
+        COS_OBJECT_CLASS_CAST(cls)->hash = cos_object_hash_method;
+        COS_OBJECT_CLASS_CAST(cls)->equals = cos_object_equals_method;
 }
 
 void cos_object_class_destruct(cos_class cls)
@@ -60,12 +72,24 @@ void cos_object_class_destruct(cos_class cls)
 
 void cos_object_construct(cos_object obj, cos_values vals)
 {
-        COS_OBJECT_N_REFS(obj) = 1;
+        obj->n_refs = 1;
 }
 
 void cos_object_destruct(cos_object obj)
 {
         /* Nothing to do. */
+}
+
+size_t cos_object_hash(cos_object obj)
+{
+        cos_object_class obj_cls;
+        obj_cls = COS_OBJECT_CLASS_CAST(obj->cls);
+        return obj_cls->hash(obj);
+}
+
+int cos_object_equals(cos_object obj, cos_object other)
+{
+        return COS_OBJECT_CLASS_CAST(cos_class_of(obj))->equals(obj, other);
 }
 
 /* TODO: Move to cosine? */
@@ -98,6 +122,11 @@ void *cos_new(cos_class cls, ...)
         va_end(args);
         cls->inst.ctor(obj, vals);
         return obj;
+}
+
+cos_class cos_class_of(void *obj)
+{
+        return COS_OBJECT_CAST(obj)->cls;
 }
 
 void *cos_ref(void *obj)

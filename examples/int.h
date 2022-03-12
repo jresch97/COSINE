@@ -33,7 +33,7 @@ typedef struct cos_int_class_s *cos_int_class;
 typedef struct cos_int_s       *cos_int;
 
 struct cos_int_class_s {
-        struct cos_class_s cls;
+        struct cos_object_class_s cls;
 };
 
 struct cos_int_s {
