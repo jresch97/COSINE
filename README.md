@@ -1,2 +1,2 @@
 # COSINE
-Runtime object system in C.
+C Object System in ANSI C.
