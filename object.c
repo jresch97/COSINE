@@ -55,7 +55,7 @@ void cos_object_class_construct(cos_class cls)
 
 void cos_object_class_destruct(cos_class cls)
 {
-        if (cls == g_cos_object_class) g_cos_object_class = NULL;
+        if (g_cos_object_class == cls) g_cos_object_class = NULL;
 }
 
 void cos_object_construct(cos_object obj, cos_values vals)
