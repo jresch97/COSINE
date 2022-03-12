@@ -52,8 +52,8 @@ void *cos_new(cos_class cls, ...);
 void *cos_ref(void *obj);
 void  cos_deref(void *obj);
 void  cos_deref_many(size_t n, ...);
-void  cos_super_class_construct(cos_class cls);
-void  cos_super_class_destruct(cos_class cls);
+void  cos_super_class_construct(cos_class parent, void *cls);
+void  cos_super_class_destruct(cos_class parent, void *cls);
 void  cos_super_construct(cos_class cls, void *obj, ...);
 void  cos_super_destruct(cos_class cls, void *obj);
 

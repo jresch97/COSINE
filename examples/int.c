@@ -48,14 +48,14 @@ cos_class cos_int_class_get()
 
 void cos_int_class_construct(cos_class cls)
 {
-        g_cos_int_class = cls;
-        cos_super_class_construct(COS_OBJECT);
+        if (!g_cos_int_class) g_cos_int_class = cls;
+        cos_super_class_construct(COS_OBJECT, cls);
 }
 
 void cos_int_class_destruct(cos_class cls)
 {
-        g_cos_int_class = NULL;
-        cos_super_class_destruct(COS_OBJECT);
+        cos_super_class_destruct(COS_OBJECT, cls);
+        if (g_cos_int_class == cls) g_cos_int_class = NULL;
 }
 
 void cos_int_construct(cos_object obj, cos_values vals)
@@ -66,7 +66,7 @@ void cos_int_construct(cos_object obj, cos_values vals)
 
 void cos_int_destruct(cos_object obj)
 {
-        /* Nothing to do. */
+        cos_super_destruct(COS_OBJECT, obj);
 }
 
 cos_int cos_int_sum(size_t n, ...)

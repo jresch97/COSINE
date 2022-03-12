@@ -51,14 +51,14 @@ cos_class cos_string_class_get()
 
 void cos_string_class_construct(cos_class cls)
 {
-        g_cos_string_class = cls;
-        cos_super_class_construct(COS_OBJECT);
+        if (!g_cos_string_class) g_cos_string_class = cls;
+        cos_super_class_construct(COS_OBJECT, cls);
 }
 
 void cos_string_class_destruct(cos_class cls)
 {
-        g_cos_string_class = NULL;
-        cos_super_class_destruct(COS_OBJECT);
+        cos_super_class_destruct(COS_OBJECT, cls);
+        if (g_cos_string_class == cls) g_cos_string_class = NULL;
 }
 
 void cos_string_construct(cos_object obj, cos_values vals)

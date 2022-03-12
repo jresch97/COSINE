@@ -20,6 +20,7 @@
  */
 
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -49,12 +50,12 @@ cos_class cos_object_class_get()
 
 void cos_object_class_construct(cos_class cls)
 {
-        g_cos_object_class = cls;
+        if (!g_cos_object_class) g_cos_object_class = cls;
 }
 
 void cos_object_class_destruct(cos_class cls)
 {
-        g_cos_object_class = NULL;
+        if (cls == g_cos_object_class) g_cos_object_class = NULL;
 }
 
 void cos_object_construct(cos_object obj, cos_values vals)
@@ -119,34 +120,32 @@ void cos_deref_many(size_t n, ...)
         size_t i;
         va_list args;
         va_start(args, n);
-        for (i = 0; i < n; i++) {
-                cos_deref(va_arg(args, void *));
-        }
+        for (i = 0; i < n; i++) cos_deref(va_arg(args, void *));
         va_end(args);
 }
 
-void cos_super_class_construct(cos_class cls)
+void cos_super_class_construct(cos_class parent, void *cls)
 {
-        cls->cls.ctor(cls);
+        parent->cls.ctor(COS_CLASS_CAST(cls));
 }
 
-void cos_super_class_destruct(cos_class cls)
+void cos_super_class_destruct(cos_class parent, void *cls)
 {
-        cls->cls.dtor(cls);
+        parent->cls.dtor(COS_CLASS_CAST(cls));
 }
 
-void cos_super_construct(cos_class cls, void *ptr, ...)
+void cos_super_construct(cos_class parent, void *obj, ...)
 {
         va_list args;
         cos_values vals;
-        vals = cls->inst.vals;
-        va_start(args, ptr);
-        cos_store_args(args, cls->inst.params, vals);
+        vals = parent->inst.vals;
+        va_start(args, obj);
+        cos_store_args(args, parent->inst.params, vals);
         va_end(args);
-        cls->inst.ctor(COS_OBJECT_CAST(ptr), vals);
+        parent->inst.ctor(COS_OBJECT_CAST(obj), vals);
 }
 
-void cos_super_destruct(cos_class cls, void *ptr)
+void cos_super_destruct(cos_class parent, void *obj)
 {
-        cls->inst.dtor(COS_OBJECT_CAST(ptr));
+        parent->inst.dtor(COS_OBJECT_CAST(obj));
 }
