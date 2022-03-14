@@ -1,25 +1,22 @@
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "../cosine.h"
+#include <cosine.h>
 
 int main(void)
 {
-        cos_object obj, obj_ref;
-        cos_class  obj_cls;
+        cos_object o1, o2, o3;
 
-        obj = cos_new(COS_OBJECT);
-        assert(obj);
-
-        printf("&obj = %p\n", (void *)obj);
-        printf("obj->n_refs = %lu\n", COS_OBJECT_N_REFS(obj));
-
-        obj_cls = COS_OBJECT_CLASS(obj);
-        printf("obj->cls->name=\"%s\"\n", COS_CLASS_NAME(obj_cls));
-
-        obj_ref = cos_ref(obj);
-        printf("obj_ref->n_refs = %lu\n", COS_OBJECT_N_REFS(obj_ref));
-
+        o1 = cos_new_object();
+        o2 = cos_new(COS_OBJECT);
+        o3 = cos_ref(o1);
+        
+        printf("%lu\n", cos_object_hash(o1));
+        printf("%lu\n", cos_object_hash(o2));
+        printf("%lu\n", cos_object_hash(o3));
+        printf("%i\n",  cos_object_equals(o1, o3));
+        printf("%i\n",  cos_object_equals(o1, o2));
+        
+        cos_deref_many(3, o1, o2, o3);
+        
         return EXIT_SUCCESS;
 }

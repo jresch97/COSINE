@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -ansi -pedantic -Wall -fPIC -g
+CFLAGS  = -ansi -pedantic -Wall -fPIC -g -I../include
 LDFLAGS = -L../ -l:libcosine.a
 OBJ     = object.o
 

@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -ansi -pedantic -Wall -fPIC -g
+CFLAGS = -ansi -pedantic -Wall -fPIC -g -I./include
 ARFLAGS = rcs
-SRC = cosine.c object.c class.c param.c value.c type.c
-OBJ = cosine.o object.o class.o param.o value.o type.o
+SRC = src/cosine.c src/object.c src/class.c
+OBJ = src/cosine.o src/object.o src/class.o
 
 all: libcosine.a libcosine.so
 
