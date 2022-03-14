@@ -43,7 +43,7 @@ static int _cos_string_equals(cos_object obj, cos_object other)
 
 static cos_string _cos_string_to_string(cos_object obj)
 {
-        return (cos_string)obj;
+        return cos_ref(obj);
 }
 
 cos_string cos_new_string(const char *c_str)
@@ -56,7 +56,7 @@ cos_class cos_string_class_get()
         cos_class_spec spec;
         if (g_cls) return g_cls;
         spec.cls_name = "String";
-        spec.parent_cls = NULL;
+        spec.parent_cls = COS_OBJECT;
         spec.cls_size = sizeof(struct cos_string_class_s);
         spec.obj_size = sizeof(struct cos_string_s);
         spec.cls_init_fn = cos_string_class_init;

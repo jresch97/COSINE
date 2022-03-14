@@ -69,7 +69,7 @@ static void cos_call_obj_init(cos_class cls, cos_object obj, va_list args)
                                 break;
                 }
         }
-        cls->obj_init_fn(obj, obj->cls->n_init_params, p);
+        cls->obj_init_fn(obj, cls->n_init_params, p);
 }
 
 void *cos_new(cos_class cls, ...)

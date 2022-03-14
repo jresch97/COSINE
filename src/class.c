@@ -36,12 +36,12 @@ cos_class cos_def_class(cos_class_spec *spec)
         strcpy(cls->cls_name, spec->cls_name);
         cls->cls_size = spec->cls_size;
         cls->obj_size = spec->obj_size;
-        cls->n_init_params = spec->n_init_params;
         cls->parent_cls = spec->parent_cls;
         cls->cls_init_fn = spec->cls_init_fn;
         cls->cls_term_fn = spec->cls_term_fn;
         cls->obj_init_fn = spec->obj_init_fn;
         cls->obj_term_fn = spec->obj_term_fn;
+        cls->n_init_params = spec->n_init_params;
         cls->init_params = spec->init_params;
         cls->cls_init_fn(cls);
         return cls;
@@ -57,14 +57,8 @@ void cos_deref_class(cos_class cls)
 {
         if (--cls->n_refs == 0) {
                 cls->cls_term_fn(cls);
-                free(cls->cls_name);
                 free(cls->init_params);
+                free(cls->cls_name);
                 free(cls);
         }
-}
-
-void cos_super_class(cos_class cls)
-{
-        assert(cls);
-        if (cls->parent_cls) cls->parent_cls->cls_init_fn(cls);
 }
