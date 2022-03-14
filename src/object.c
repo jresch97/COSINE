@@ -35,9 +35,9 @@ static size_t _cos_object_hash(cos_object obj)
         return (size_t)obj;
 }
 
-static int _cos_object_equals(cos_object obj, cos_object other)
+static int _cos_object_equals(cos_object obj1, cos_object obj2)
 {
-        return obj == other;
+        return obj1 == obj2;
 }
 
 static cos_string _cos_object_to_string(cos_object obj)
@@ -95,9 +95,9 @@ size_t cos_object_hash(cos_object obj)
         return ((cos_object_class)obj->cls)->hash(obj);
 }
 
-int cos_object_equals(cos_object obj, cos_object other)
+int cos_object_equals(cos_object obj1, cos_object obj2)
 {
-        return ((cos_object_class)obj->cls)->equals(obj, other);
+        return ((cos_object_class)obj1->cls)->equals(obj1, obj2);
 }
 
 cos_string cos_object_to_string(cos_object obj)

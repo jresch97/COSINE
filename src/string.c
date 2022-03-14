@@ -40,10 +40,10 @@ static size_t _cos_string_hash(cos_object obj)
         return h;
 }
 
-static int _cos_string_equals(cos_object obj, cos_object other)
+static int _cos_string_equals(cos_object obj1, cos_object obj2)
 {
-        return strcmp(((cos_string)obj)->c_str,
-                      ((cos_string)other)->c_str) == 0;
+        return strcmp(((cos_string)obj1)->c_str,
+                      ((cos_string)obj2)->c_str) == 0;
 }
 
 static cos_string _cos_string_to_string(cos_object obj)
