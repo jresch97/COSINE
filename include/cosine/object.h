@@ -29,8 +29,8 @@
 
 struct cos_object_class_s {
         struct cos_class_s cls;
-        size_t (*hash)(cos_object);
-        int (*equals)(cos_object, cos_object);
+        size_t     (*hash)(cos_object);
+        int        (*equals)(cos_object, cos_object);
         cos_string (*to_string)(cos_object);
 };
 

@@ -37,7 +37,7 @@ enum COS_TYPES {
         COS_USHORT_TYPE,
         COS_UINT_TYPE,
         COS_ULONG_TYPE,
-        COS_SIZE_T_TYPE
+        COS_SIZE_TYPE
 };
 
 typedef struct cos_param_s         cos_param;

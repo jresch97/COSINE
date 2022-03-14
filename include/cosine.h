@@ -25,6 +25,7 @@
 #include "cosine/type.h"
 #include "cosine/class.h"
 #include "cosine/object.h"
+#include "cosine/string.h"
 
 void     *cos_new(cos_class cls, ...);
 void     *cos_ref(void *obj);

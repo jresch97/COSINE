@@ -26,6 +26,7 @@
 
 #include "cosine.h"
 #include "cosine/object.h"
+#include "cosine/string.h"
 
 static cos_class g_cls = NULL;
 
@@ -41,7 +42,7 @@ static int _cos_object_equals(cos_object obj, cos_object other)
 
 static cos_string _cos_object_to_string(cos_object obj)
 {
-        return NULL; /* cos_new_string(obj->cls->cls_name); */
+        return cos_new_string(obj->cls->cls_name);
 }
 
 cos_object cos_new_object()

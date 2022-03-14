@@ -22,29 +22,26 @@
 #ifndef COS_STRING_H
 #define COS_STRING_H
 
+#include "type.h"
 #include "class.h"
-#include "object.h"
 
 #define COS_STRING (cos_string_class_get())
 
 struct cos_string_class_s {
-        struct cos_object_class_s class;
+        struct cos_object_class_s cls;
 };
 
 struct cos_string_s {
-        struct cos_object_s object;
+        struct cos_object_s obj;
+        size_t len;
+        char  *c_str;
 };
 
-cos_object cos_new_object();
-
-cos_class  cos_get_object_class();
-void       cos_init_object_class(cos_class class);
-void       cos_term_object_class(cos_class class);
-void       cos_init_object(cos_object object, cos_values values);
-void       cos_term_object(cos_object object);
-
-int        cos_object_equals(cos_object object, cos_object other);
-size_t     cos_object_hash(cos_object object);
-cos_string cos_object_to_string(cos_object object);
+cos_string cos_new_string(const char *c_str);
+cos_class  cos_string_class_get();
+void       cos_string_class_init(cos_class cls);
+void       cos_string_class_term(cos_class cls);
+void       cos_string_init(cos_object obj, size_t n_params, cos_param *params);
+void       cos_string_term(cos_object obj);
 
 #endif
