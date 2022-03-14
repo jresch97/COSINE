@@ -38,6 +38,7 @@
 cosine
 examples/example
 tests/object
+tests/string
 
 # Debug files
 *.dSYM/
