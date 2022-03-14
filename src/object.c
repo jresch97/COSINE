@@ -67,12 +67,12 @@ cos_class cos_object_class_get()
 
 void cos_object_class_init(cos_class cls)
 {
-        cos_object_class obj_cls;
+        cos_object_class objcls;
         if (!g_cls) g_cls = cls;
-        obj_cls = (cos_object_class)cls;
-        obj_cls->hash = _cos_object_hash;
-        obj_cls->equals = _cos_object_equals;
-        obj_cls->to_string = _cos_object_to_string;
+        objcls = (cos_object_class)cls;
+        objcls->hash = _cos_object_hash;
+        objcls->equals = _cos_object_equals;
+        objcls->to_string = _cos_object_to_string;
 }
 
 void cos_object_class_term(cos_class cls)
@@ -87,7 +87,7 @@ void cos_object_init(cos_object obj, cos_args args)
 
 void cos_object_term(cos_object obj)
 {
-
+        /* Intentionally not implemented. */
 }
 
 size_t cos_object_hash(cos_object obj)

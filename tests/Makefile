@@ -1,11 +1,14 @@
 CC      = gcc
 CFLAGS  = -ansi -pedantic -Wall -fPIC -g -I../include
 LDFLAGS = -L../ -l:libcosine.a
-OBJ     = object.o
+OBJ     = object.o string.o
 
-all: object
+all: object string
 
 object: object.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+string: string.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 .c.o:

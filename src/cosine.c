@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "cosine.h"
 
@@ -45,11 +46,12 @@ void *cos_ref(void *obj)
 
 void cos_deref(void *obj)
 {
-        assert(obj);
-        if (--((cos_object)obj)->n_refs == 0) {
-                ((cos_object)obj)->cls->obj_term_fn((cos_object)obj);
-                cos_deref_class(((cos_object)obj)->cls);
-                free(obj);
+        cos_object tmp;
+        tmp = (cos_object)obj;
+        if (tmp && --tmp->n_refs == 0) {
+                tmp->cls->obj_term_fn(tmp);
+                cos_deref_class(tmp->cls);
+                free(tmp);
         }
 }
 
@@ -57,9 +59,10 @@ void cos_deref_many(size_t n, ...)
 {
         size_t i;
         va_list args;
-        assert(n > 0);
         va_start(args, n);
-        for (i = 0; i < n; i++) cos_deref(va_arg(args, void *));
+        for (i = 0; i < n; i++) {
+                cos_deref(va_arg(args, void *));
+        }
         va_end(args);
 }
 
@@ -69,15 +72,53 @@ void cos_super(void *obj, ...)
         cos_class parent_cls;
         assert(obj);
         parent_cls = ((cos_object)obj)->cls->parent_cls;
-        if (parent_cls) {
-                va_start(args, obj);
-                parent_cls->obj_init_fn(obj, args);
-                va_end(args);
-        }
+        assert(parent_cls);
+        va_start(args, obj);
+        parent_cls->obj_init_fn(obj, args);
+        va_end(args);
 }
 
 cos_class cos_class_of(void *obj)
 {
         assert(obj);
         return ((cos_object)obj)->cls;
+}
+
+cos_class cos_def_class(cos_class_spec *spec)
+{
+        cos_class cls;
+        assert(spec);
+        cls = malloc(spec->cls_size);
+        if (!cls) return NULL;
+        cls->n_refs = 0;
+        cls->cls_name = malloc(strlen(spec->cls_name) + 1);
+        if (!cls->cls_name) {
+                free(cls);
+                return NULL;
+        }
+        strcpy(cls->cls_name, spec->cls_name);
+        cls->cls_size = spec->cls_size;
+        cls->obj_size = spec->obj_size;
+        cls->parent_cls = spec->parent_cls;
+        cls->cls_init_fn = spec->cls_init_fn;
+        cls->cls_term_fn = spec->cls_term_fn;
+        cls->obj_init_fn = spec->obj_init_fn;
+        cls->obj_term_fn = spec->obj_term_fn;
+        cls->cls_init_fn(cls);
+        return cls;
+}
+
+cos_class cos_ref_class(cos_class cls)
+{
+        cls->n_refs++;
+        return cls;
+}
+
+void cos_deref_class(cos_class cls)
+{
+        if (cls && --cls->n_refs == 0) {
+                cls->cls_term_fn(cls);
+                free(cls->cls_name);
+                free(cls);
+        }
 }

@@ -32,7 +32,12 @@ static cos_class g_cls = NULL;
 
 static size_t _cos_string_hash(cos_object obj)
 {
-        return (size_t)obj;
+        int c;
+        size_t h = 5381;
+        const char *c_str;
+        c_str = ((cos_string)obj)->c_str;
+        while ((c = *c_str++)) h = ((h << 5) + h) + c;
+        return h;
 }
 
 static int _cos_string_equals(cos_object obj, cos_object other)
@@ -68,29 +73,29 @@ cos_class cos_string_class_get()
 
 void cos_string_class_init(cos_class cls)
 {
-        assert(cls);
+        cos_object_class objcls;
         if (!g_cls) g_cls = cls;
-        ((cos_object_class)cls)->hash = _cos_string_hash;
-        ((cos_object_class)cls)->equals = _cos_string_equals;
-        ((cos_object_class)cls)->to_string = _cos_string_to_string;
+        objcls = (cos_object_class)cls;
+        objcls->hash = _cos_string_hash;
+        objcls->equals = _cos_string_equals;
+        objcls->to_string = _cos_string_to_string;
 }
 
 void cos_string_class_term(cos_class cls)
 {
-        assert(cls);
         if (g_cls == cls) g_cls = NULL;
 }
 
 void cos_string_init(cos_object obj, cos_args args)
 {
-        size_t len;
+        cos_string str;
         const char *c_str;
         cos_super(obj);
+        str = (cos_string)obj;
         c_str = cos_arg(args, const char *);
-        len = strlen(c_str);
-        ((cos_string)obj)->c_str = malloc(len + 1);
-        strcpy(((cos_string)obj)->c_str, c_str);
-        ((cos_string)obj)->len = len;
+        str->len = strlen(c_str);
+        str->c_str = malloc(str->len + 1);
+        strcpy(str->c_str, c_str);
 }
 
 void cos_string_term(cos_object obj)

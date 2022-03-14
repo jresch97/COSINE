@@ -25,24 +25,10 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-enum COS_TYPES {
-        COS_VOID_TYPE = 0,
-        COS_CLASS_TYPE,
-        COS_OBJECT_TYPE,
-        COS_STRING_TYPE,
-        COS_CHAR_TYPE,
-        COS_SHORT_TYPE,
-        COS_INT_TYPE,
-        COS_LONG_TYPE,
-        COS_BYTE_TYPE,
-        COS_USHORT_TYPE,
-        COS_UINT_TYPE,
-        COS_ULONG_TYPE,
-        COS_SIZE_TYPE
-};
+#define cos_arg(args, arg) (va_arg(args, arg))
 
+typedef va_list cos_args;
 
-typedef va_list                    cos_args;
 typedef struct cos_class_s        *cos_class;
 typedef struct cos_object_class_s *cos_object_class;
 typedef struct cos_object_s       *cos_object;

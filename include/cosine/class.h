@@ -24,8 +24,6 @@
 
 #include "type.h"
 
-#define cos_arg(args, arg) (va_arg(args, arg))
-
 typedef struct cos_class_spec_s {
         const char        *cls_name;
         size_t             cls_size;
@@ -49,9 +47,5 @@ struct cos_class_s {
         cos_object_init_fn obj_init_fn;
         cos_object_term_fn obj_term_fn;
 };
-
-cos_class cos_def_class(cos_class_spec *spec);
-cos_class cos_ref_class(cos_class cls);
-void      cos_deref_class(cos_class cls);
 
 #endif
