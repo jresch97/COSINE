@@ -60,9 +60,7 @@ void cos_deref_many(size_t n, ...)
         size_t i;
         va_list args;
         va_start(args, n);
-        for (i = 0; i < n; i++) {
-                cos_deref(va_arg(args, void *));
-        }
+        for (i = 0; i < n; i++) cos_deref(va_arg(args, void *));
         va_end(args);
 }
 

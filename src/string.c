@@ -42,8 +42,10 @@ static size_t _cos_string_hash(cos_object obj)
 
 static int _cos_string_equals(cos_object obj1, cos_object obj2)
 {
-        return strcmp(((cos_string)obj1)->c_str,
-                      ((cos_string)obj2)->c_str) == 0;
+        cos_string str1, str2;
+        str1 = (cos_string)obj1;
+        str2 = (cos_string)obj2;
+        return strcmp(str1->c_str, str2->c_str) == 0;
 }
 
 static cos_string _cos_string_to_string(cos_object obj)
@@ -101,4 +103,41 @@ void cos_string_init(cos_object obj, cos_args args)
 void cos_string_term(cos_object obj)
 {
         free(((cos_string)obj)->c_str);
+}
+
+cos_string cos_string_join(cos_string str1, cos_string str2)
+{
+        char *c_str;
+        cos_string str;
+        c_str = malloc(str1->len + str2->len + 1);
+        strcpy(c_str, str1->c_str);
+        strcpy(c_str + str1->len, str2->c_str);
+        str = cos_new_string(c_str);
+        free(c_str);
+        return str;
+}
+
+cos_string cos_string_join_many(size_t n, ...)
+{
+        size_t i, j, len;
+        char *c_str;
+        va_list args;
+        cos_string str, *strs;
+        len = 1;
+        strs = malloc(n * sizeof(*strs));
+        va_start(args, n);
+        for (i = 0; i < n; i++) {
+                strs[i] = va_arg(args, cos_string);
+                len += strs[i]->len;
+        }
+        va_end(args);
+        c_str = malloc(len);
+        for (i = 0, j = 0; i < n; i++) {
+                strcpy(c_str + j, strs[i]->c_str);
+                j += strs[i]->len;
+        }
+        str = cos_new_string(c_str);
+        free(c_str);
+        free(strs);
+        return str;
 }

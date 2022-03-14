@@ -43,5 +43,7 @@ void       cos_string_class_init(cos_class cls);
 void       cos_string_class_term(cos_class cls);
 void       cos_string_init(cos_object obj, cos_args args);
 void       cos_string_term(cos_object obj);
+cos_string cos_string_join(cos_string str1, cos_string str2);
+cos_string cos_string_join_many(size_t n, ...);
 
 #endif
