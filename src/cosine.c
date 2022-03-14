@@ -64,15 +64,12 @@ void cos_deref_many(size_t n, ...)
         va_end(args);
 }
 
-void cos_super(void *obj, ...)
+void cos_super(cos_class cls, void *obj, ...)
 {
         va_list args;
-        cos_class parent_cls;
         assert(obj);
-        parent_cls = ((cos_object)obj)->cls->parent_cls;
-        assert(parent_cls);
         va_start(args, obj);
-        parent_cls->obj_init_fn(obj, args);
+        cls->obj_init_fn(obj, args);
         va_end(args);
 }
 

@@ -76,6 +76,7 @@ void cos_string_class_init(cos_class cls)
 {
         cos_object_class objcls;
         if (!g_cls) g_cls = cls;
+        cos_object_class_init(cls);
         objcls = (cos_object_class)cls;
         objcls->hash = _cos_string_hash;
         objcls->equals = _cos_string_equals;
@@ -84,6 +85,7 @@ void cos_string_class_init(cos_class cls)
 
 void cos_string_class_term(cos_class cls)
 {
+        cos_object_class_term(cls);
         if (g_cls == cls) g_cls = NULL;
 }
 
@@ -91,7 +93,7 @@ void cos_string_init(cos_object obj, cos_args args)
 {
         cos_string str;
         const char *c_str;
-        cos_super(obj);
+        cos_super(COS_OBJECT, obj);
         str = (cos_string)obj;
         c_str = cos_arg(args, const char *);
         str->len = strlen(c_str);
@@ -102,6 +104,7 @@ void cos_string_init(cos_object obj, cos_args args)
 void cos_string_term(cos_object obj)
 {
         free(((cos_string)obj)->c_str);
+        cos_object_term(obj);
 }
 
 cos_string cos_string_join(cos_string str1, cos_string str2)
