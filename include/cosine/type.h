@@ -25,7 +25,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#define cos_arg(args, arg) (va_arg(args, arg))
+#define cos_arg(args, arg) va_arg(args, arg)
 
 typedef va_list cos_args;
 
