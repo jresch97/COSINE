@@ -85,7 +85,7 @@ cos_class cos_def_class(cos_class_spec *spec)
         assert(spec);
         cls = malloc(spec->cls_size);
         if (!cls) return NULL;
-        cls->n_refs = 0;
+        cls->n_refs = 1;
         cls->cls_name = malloc(strlen(spec->cls_name) + 1);
         if (!cls->cls_name) {
                 free(cls);
@@ -111,6 +111,7 @@ cos_class cos_ref_class(cos_class cls)
 
 void cos_deref_class(cos_class cls)
 {
+        printf("%s\n", cls->cls_name);
         if (cls && --cls->n_refs == 0) {
                 cls->cls_term_fn(cls);
                 free(cls->cls_name);
