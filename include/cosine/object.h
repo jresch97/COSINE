@@ -22,8 +22,8 @@
 #ifndef COS_OBJECT_H
 #define COS_OBJECT_H
 
-#include "cosine/type.h"
-#include "cosine/class.h"
+#include "type.h"
+#include "class.h"
 
 #define COS_OBJECT (cos_object_class_get())
 

@@ -22,7 +22,7 @@
 #ifndef COS_CLASS_H
 #define COS_CLASS_H
 
-#include "cosine/type.h"
+#include "type.h"
 
 struct cos_param_s {
         int type;
