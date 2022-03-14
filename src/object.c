@@ -25,8 +25,6 @@
 #include <stdlib.h>
 
 #include "cosine.h"
-#include "cosine/object.h"
-#include "cosine/string.h"
 
 static cos_class g_cls = NULL;
 
