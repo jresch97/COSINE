@@ -33,8 +33,8 @@ void      cos_deref(void *obj);
 void      cos_deref_many(size_t n, ...);
 void      cos_super(void *obj, ...);
 cos_class cos_class_of(void *obj);
-cos_class cos_def_class  (cos_class_spec *spec);
-cos_class cos_ref_class  (cos_class cls);
+cos_class cos_def_class(cos_class_spec *spec);
+cos_class cos_ref_class(cos_class cls);
 void      cos_deref_class(cos_class cls);
 
 #endif
