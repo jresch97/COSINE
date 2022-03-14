@@ -22,6 +22,7 @@
 #ifndef COS_TYPE_H
 #define COS_TYPE_H
 
+#include <stdarg.h>
 #include <stddef.h>
 
 enum COS_TYPES {
@@ -40,7 +41,8 @@ enum COS_TYPES {
         COS_SIZE_TYPE
 };
 
-typedef struct cos_param_s         cos_param;
+
+typedef va_list                    cos_args;
 typedef struct cos_class_s        *cos_class;
 typedef struct cos_object_class_s *cos_object_class;
 typedef struct cos_object_s       *cos_object;
@@ -49,7 +51,7 @@ typedef struct cos_string_s       *cos_string;
 
 typedef void (*cos_class_init_fn)(cos_class);
 typedef void (*cos_class_term_fn)(cos_class);
-typedef void (*cos_object_init_fn)(cos_object, size_t, cos_param *);
+typedef void (*cos_object_init_fn)(cos_object, cos_args args);
 typedef void (*cos_object_term_fn)(cos_object);
 
 #endif

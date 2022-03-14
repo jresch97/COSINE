@@ -55,7 +55,7 @@ cos_class cos_string_class_get()
 {
         cos_class_spec spec;
         if (g_cls) return g_cls;
-        spec.cls_name = "String";
+        spec.cls_name = "COS_STRING";
         spec.parent_cls = COS_OBJECT;
         spec.cls_size = sizeof(struct cos_string_class_s);
         spec.obj_size = sizeof(struct cos_string_s);
@@ -63,9 +63,6 @@ cos_class cos_string_class_get()
         spec.cls_term_fn = cos_string_class_term;
         spec.obj_init_fn = cos_string_init;
         spec.obj_term_fn = cos_string_term;
-        spec.n_init_params = 1;
-        spec.init_params = malloc(spec.n_init_params * sizeof(*spec.init_params));
-        spec.init_params[0].type = COS_STRING_TYPE;
         return cos_def_class(&spec);
 }
 
@@ -84,14 +81,16 @@ void cos_string_class_term(cos_class cls)
         if (g_cls == cls) g_cls = NULL;
 }
 
-void cos_string_init(cos_object obj, size_t n_params, cos_param *params)
+void cos_string_init(cos_object obj, cos_args args)
 {
-        assert(n_params == 1);
-        assert(params);
+        size_t len;
+        const char *c_str;
         cos_super(obj);
-        ((cos_string)obj)->len = strlen(params[0].data.str);
-        ((cos_string)obj)->c_str = malloc(((cos_string)obj)->len + 1);
-        strcpy(((cos_string)obj)->c_str, params[0].data.str);
+        c_str = cos_arg(args, const char *);
+        len = strlen(c_str);
+        ((cos_string)obj)->c_str = malloc(len + 1);
+        strcpy(((cos_string)obj)->c_str, c_str);
+        ((cos_string)obj)->len = len;
 }
 
 void cos_string_term(cos_object obj)

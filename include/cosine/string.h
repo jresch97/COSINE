@@ -41,7 +41,7 @@ cos_string cos_new_string(const char *c_str);
 cos_class  cos_string_class_get();
 void       cos_string_class_init(cos_class cls);
 void       cos_string_class_term(cos_class cls);
-void       cos_string_init(cos_object obj, size_t n_params, cos_param *params);
+void       cos_string_init(cos_object obj, cos_args args);
 void       cos_string_term(cos_object obj);
 
 #endif

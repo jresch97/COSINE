@@ -41,8 +41,6 @@ cos_class cos_def_class(cos_class_spec *spec)
         cls->cls_term_fn = spec->cls_term_fn;
         cls->obj_init_fn = spec->obj_init_fn;
         cls->obj_term_fn = spec->obj_term_fn;
-        cls->n_init_params = spec->n_init_params;
-        cls->init_params = spec->init_params;
         cls->cls_init_fn(cls);
         return cls;
 }
@@ -57,7 +55,6 @@ void cos_deref_class(cos_class cls)
 {
         if (--cls->n_refs == 0) {
                 cls->cls_term_fn(cls);
-                free(cls->init_params);
                 free(cls->cls_name);
                 free(cls);
         }

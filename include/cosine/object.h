@@ -43,7 +43,7 @@ cos_object cos_new_object();
 cos_class  cos_object_class_get();
 void       cos_object_class_init(cos_class cls);
 void       cos_object_class_term(cos_class cls);
-void       cos_object_init(cos_object obj, size_t n_params, cos_param *params);
+void       cos_object_init(cos_object obj, cos_args args);
 void       cos_object_term(cos_object obj);
 int        cos_object_equals(cos_object obj, cos_object other);
 size_t     cos_object_hash(cos_object obj);

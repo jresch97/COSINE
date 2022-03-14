@@ -54,7 +54,7 @@ cos_class cos_object_class_get()
 {
         cos_class_spec spec;
         if (g_cls) return g_cls;
-        spec.cls_name = "Object";
+        spec.cls_name = "COS_OBJECT";
         spec.parent_cls = NULL;
         spec.cls_size = sizeof(struct cos_object_class_s);
         spec.obj_size = sizeof(struct cos_object_s);
@@ -62,30 +62,26 @@ cos_class cos_object_class_get()
         spec.cls_term_fn = cos_object_class_term;
         spec.obj_init_fn = cos_object_init;
         spec.obj_term_fn = cos_object_term;
-        spec.n_init_params = 0;
-        spec.init_params = NULL;
         return cos_def_class(&spec);
 }
 
 void cos_object_class_init(cos_class cls)
 {
-        assert(cls);
+        cos_object_class obj_cls;
         if (!g_cls) g_cls = cls;
-        ((cos_object_class)cls)->hash = _cos_object_hash;
-        ((cos_object_class)cls)->equals = _cos_object_equals;
-        ((cos_object_class)cls)->to_string = _cos_object_to_string;
+        obj_cls = (cos_object_class)cls;
+        obj_cls->hash = _cos_object_hash;
+        obj_cls->equals = _cos_object_equals;
+        obj_cls->to_string = _cos_object_to_string;
 }
 
 void cos_object_class_term(cos_class cls)
 {
-        assert(cls);
         if (g_cls == cls) g_cls = NULL;
 }
 
-void cos_object_init(cos_object obj, size_t n_params, cos_param *params)
+void cos_object_init(cos_object obj, cos_args args)
 {
-        assert(n_params == 0);
-        assert(!params);
         obj->n_refs = 1;
 }
 

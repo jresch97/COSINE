@@ -25,53 +25,6 @@
 
 #include "cosine.h"
 
-static void cos_call_obj_init(cos_class cls, cos_object obj, va_list args)
-{
-        size_t i;
-        cos_param *p = cls->init_params;
-        for (i = 0; i < cls->n_init_params; i++) {
-                switch (p[i].type) {
-                        case COS_CLASS_TYPE:
-                                p[i].data.cls = va_arg(args, cos_class);
-                                break;
-                        case COS_OBJECT_TYPE:
-                                p[i].data.obj = va_arg(args, cos_object);
-                                break;
-                        case COS_STRING_TYPE:
-                                p[i].data.str = va_arg(args, const char *);
-                                break;
-                        case COS_CHAR_TYPE:
-                                p[i].data.schar = va_arg(args, int);
-                                break;
-                        case COS_SHORT_TYPE:
-                                p[i].data.sshort = va_arg(args, int);
-                                break;
-                        case COS_INT_TYPE:
-                                p[i].data.sint = va_arg(args, int);
-                                break;
-                        case COS_LONG_TYPE:
-                                p[i].data.slong = va_arg(args, long);
-                                break;
-                        case COS_BYTE_TYPE:
-                                p[i].data.uchar = va_arg(args, unsigned int);
-                                break;
-                        case COS_USHORT_TYPE:
-                                p[i].data.ushort = va_arg(args, unsigned int);
-                                break;
-                        case COS_UINT_TYPE:
-                                p[i].data.uint = va_arg(args, unsigned int);
-                                break;
-                        case COS_ULONG_TYPE:
-                                p[i].data.ulong = va_arg(args, unsigned long);
-                                break;
-                        case COS_SIZE_TYPE:
-                                p[i].data.size = va_arg(args, size_t);
-                                break;
-                }
-        }
-        cls->obj_init_fn(obj, cls->n_init_params, p);
-}
-
 void *cos_new(cos_class cls, ...)
 {
         va_list args;
@@ -79,7 +32,7 @@ void *cos_new(cos_class cls, ...)
         if (!obj) return NULL;
         obj->cls = cos_ref_class(cls);
         va_start(args, cls);
-        cos_call_obj_init(cls, obj, args); 
+        cls->obj_init_fn(obj, args);
         va_end(args);
         return obj;
 }
@@ -118,7 +71,7 @@ void cos_super(void *obj, ...)
         parent_cls = ((cos_object)obj)->cls->parent_cls;
         if (parent_cls) {
                 va_start(args, obj);
-                cos_call_obj_init(parent_cls, ((cos_object)obj), args); 
+                parent_cls->obj_init_fn(obj, args);
                 va_end(args);
         }
 }

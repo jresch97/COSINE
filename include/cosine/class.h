@@ -24,23 +24,7 @@
 
 #include "type.h"
 
-struct cos_param_s {
-        int type;
-        union {
-                cos_class      cls;
-                cos_object     obj;
-                const char    *str;
-                char           schar;
-                short          sshort;
-                int            sint;
-                long           slong;
-                unsigned char  uchar;
-                unsigned short ushort;
-                unsigned int   uint;
-                unsigned long  ulong;
-                size_t         size;
-        } data;
-};
+#define cos_arg(args, arg) (va_arg(args, arg))
 
 typedef struct cos_class_spec_s {
         const char        *cls_name;
@@ -51,8 +35,6 @@ typedef struct cos_class_spec_s {
         cos_class_term_fn  cls_term_fn;
         cos_object_init_fn obj_init_fn;
         cos_object_term_fn obj_term_fn;
-        size_t             n_init_params;
-        cos_param         *init_params;
 } cos_class_spec;
 
 struct cos_class_s {
@@ -66,8 +48,6 @@ struct cos_class_s {
         cos_class_term_fn  cls_term_fn;
         cos_object_init_fn obj_init_fn;
         cos_object_term_fn obj_term_fn;
-        size_t             n_init_params;
-        cos_param         *init_params;
 };
 
 cos_class cos_def_class(cos_class_spec *spec);
